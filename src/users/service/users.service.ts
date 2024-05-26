@@ -36,8 +36,18 @@ export class UsersService implements IUsersService {
         return false;
     }
 
-    validateUser(user: UserLoginDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    async validateUser({ email, password }: UserLoginDto): Promise<boolean> {
+        const existUserInDB = await this.usersRepository.find(email);
+
+        if (!existUserInDB) {
+            return false;
+        }
+
+        const user = new User(
+            existUserInDB.name,
+            existUserInDB.email,
+            existUserInDB.password,
+        );
     }
     changeUser(user: UserChangeDto): Promise<boolean> {
         throw new Error('Method not implemented.');

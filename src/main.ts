@@ -14,6 +14,8 @@ import { IUsersRepository } from './users/repository/users.repository.interface'
 import { UserRepository } from './users/repository/users.repository';
 import { IJWTService } from './JWTService/JWT.service.interface';
 import { JWTService } from './JWTService/JWT.service';
+import { IRolesOnUsersRepository } from './users/repository/rolesOnUsers.repository.interface';
+import { RolesOnUsersRepository } from './users/repository/rolesOnUsers.repository';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -49,6 +51,10 @@ function buidContainer(): Container {
         bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
 
         bind<App>(TYPES.App).to(App).inSingletonScope();
+
+        bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(
+            RolesOnUsersRepository,
+        );
     });
     container.load(mainModule);
     return container;

@@ -3,7 +3,7 @@ import { hash, compare } from 'bcryptjs';
 
 export class User {
     _password: string;
-    _role: Roles = 'USER';
+    _role: Roles[] = ['USER'];
 
     constructor(
         private readonly _name: string,
@@ -23,7 +23,7 @@ export class User {
         return this._password;
     }
 
-    get role(): Roles {
+    get role(): Roles[] {
         return this._role;
     }
 
@@ -35,7 +35,7 @@ export class User {
         return compare(password, this._password);
     }
 
-    setRole(role: Roles): void {
+    setRole(role: Roles[]): void {
         this._role = role;
     }
 }

@@ -63,9 +63,9 @@ export class UsersController extends Controller implements IController {
             return this.unauthorized(res, 'Не верный логин или пароль');
         }
 
-        const token = this.jwtService.sign(body.email);
+        const token = this.jwtService.sign(role);
 
-        this.ok(res, { message: 'Пользоваьтель успешно авторизован', token });
+        this.ok(res, { message: 'Аутентификация выполнена успешно', token });
     }
 
     async delete(

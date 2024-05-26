@@ -15,11 +15,11 @@ export class JWTService implements IJWTService {
         this.secret = this.configService.get('SECRET');
     }
 
-    async sign(email: string): Promise<string> {
+    async sign(role: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             sign(
                 {
-                    email,
+                    role,
                     iat: Math.floor(Date.now() / 1000),
                 },
                 this.secret,

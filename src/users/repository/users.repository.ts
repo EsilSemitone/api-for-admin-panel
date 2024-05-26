@@ -12,13 +12,13 @@ export class UserRepository implements IUsersRepository {
         @inject(TYPES.PrismaService) private prismaService: PrismaService,
     ) {}
 
-    async crete({ name, email, password }: User): Promise<UserModel> {
+    async create({ name, email, password }: User): Promise<UserModel> {
         return this.prismaService.dbClient.user.create({
             data: { name, email, password },
         });
     }
 
-    async find({ email }: User): Promise<UserModel | null> {
+    async find(email: string): Promise<UserModel | null> {
         return this.prismaService.dbClient.user.findFirst({
             where: {
                 email,
@@ -26,14 +26,13 @@ export class UserRepository implements IUsersRepository {
         });
     }
 
-    async update({ name, email, password, role }: User): Promise<UserModel> {
+    async update({ name, email, password }: User): Promise<UserModel> {
         return this.prismaService.dbClient.user.update({
             where: { email },
             data: {
                 name,
                 email,
                 password,
-                role,
             },
         });
     }
