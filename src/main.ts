@@ -12,6 +12,8 @@ import { IUsersService } from './users/service/users.service.interface';
 import { UsersService } from './users/service/users.service';
 import { IUsersRepository } from './users/repository/users.repository.interface';
 import { UserRepository } from './users/repository/users.repository';
+import { IJWTService } from './JWTService/JWT.service.interface';
+import { JWTService } from './JWTService/JWT.service';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -43,6 +45,8 @@ function buidContainer(): Container {
         bind<IUsersRepository>(TYPES.UserRepository)
             .to(UserRepository)
             .inSingletonScope();
+
+        bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
 
         bind<App>(TYPES.App).to(App).inSingletonScope();
     });

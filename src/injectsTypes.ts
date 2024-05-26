@@ -6,4 +6,5 @@ export const TYPES = {
     PrismaService: Symbol('PrismaService'),
     UsersService: Symbol('UsersService'),
     UserRepository: Symbol('UserRepository'),
+    JWTService: Symbol('JWTService'),
 };

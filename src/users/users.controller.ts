@@ -11,12 +11,14 @@ import { UserDeleteDto } from './dto/users.delete.dto';
 import { UserChangeDto } from './dto/users.change.dto';
 import { IUsersService } from './service/users.service.interface';
 import { HttpExeption } from '../exeptionFilters/http.exeption';
+import { IJWTService } from '../JWTService/JWT.service.interface';
 
 @injectable()
 export class UsersController extends Controller implements IController {
     constructor(
         @inject(TYPES.Logger) private logger: ILogger,
         @inject(TYPES.UsersService) private usersService: IUsersService,
+        @inject(TYPES.JWTService) private jwtService: IJWTService,
     ) {
         super();
         this.bindRouts([
@@ -42,19 +44,29 @@ export class UsersController extends Controller implements IController {
                 new HttpExeption(
                     'Пользователь уже зарегистрирован',
                     409,
-                    'UsersController.register',
+                    '[UsersController.register]',
                 ),
             );
         }
 
-        this.ok(res, { message: body.email });
+        this.ok(res, { message: 'Пользователь успешно зарегистрирован' });
     }
 
     async login(
         { body }: Request<{}, {}, UserLoginDto>,
         res: Response,
         next: NextFunction,
-    ): Promise<void> {}
+    ): Promise<void | Response> {
+        const result = await this.usersService.validateUser(body);
+
+        if (!result) {
+            return this.unauthorized(res, 'Не верный логин или пароль');
+        }
+
+        const token = this.jwtService.sign(body.email);
+
+        this.ok(res, { message: 'Пользоваьтель успешно авторизован', token });
+    }
 
     async delete(
         { body }: Request<{}, {}, UserDeleteDto>,

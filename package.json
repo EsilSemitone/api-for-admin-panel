@@ -27,6 +27,7 @@
         "@types/bcryptjs": "^2.4.6",
         "@types/express": "^4.17.21",
         "@types/node": "^20.12.12",
+        "@types/passport-jwt": "^4.0.1",
         "@types/signale": "^1.4.7",
         "@typescript-eslint/eslint-plugin": "^7.9.0",
         "@typescript-eslint/parser": "^7.9.0",
@@ -47,6 +48,7 @@
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
         "inversify": "^6.0.2",
+        "jsonwebtoken": "^9.0.2",
         "reflect-metadata": "^0.2.2",
         "signale": "^1.4.0"
     }

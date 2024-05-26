@@ -28,6 +28,10 @@ export abstract class Controller implements IController {
         return res.send(message);
     }
 
+    redirect(res: Response, rout: string): void {
+        return res.redirect(rout);
+    }
+
     ok<T extends string | object>(res: Response, message: T): Response {
         return this.send(res, 200, message);
     }
