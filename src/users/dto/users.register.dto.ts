@@ -13,6 +13,4 @@ export class UserRegisterDto {
     @Length(8)
     @IsString()
     password: string;
-
-    role?: Roles;
 }

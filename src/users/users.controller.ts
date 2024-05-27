@@ -27,17 +27,15 @@ export class UsersController extends Controller implements IController {
             { path: '/delete', method: 'post', func: this.delete },
             { path: '/update', method: 'post', func: this.update },
         ]);
-        this.logger.success(
-            '[UsersController] Успешно подвязанны обработчики роутов',
-        );
+        this.logger.success('[UsersController] Успешно подвязанны обработчики роутов');
     }
 
     async register(
         { body }: Request<{}, {}, UserRegisterDto>,
         res: Response,
         next: NextFunction,
-    ): Promise<void> {
-        const result = this.usersService.createUser(body);
+    ): Promise<Response | void> {
+        const result = await this.usersService.createUser(body);
 
         if (!result) {
             return next(
@@ -49,7 +47,7 @@ export class UsersController extends Controller implements IController {
             );
         }
 
-        this.ok(res, { message: 'Пользователь успешно зарегистрирован' });
+        return this.ok(res, { message: 'Пользователь успешно зарегистрирован' });
     }
 
     async login(
@@ -57,13 +55,13 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
-        const result = await this.usersService.validateUser(body);
+        const validUser = await this.usersService.validateUser(body);
 
-        if (!result) {
+        if (!validUser) {
             return this.unauthorized(res, 'Не верный логин или пароль');
         }
-
-        const token = this.jwtService.sign(role);
+        const roles = await this.usersService.getRoles(validUser.id);
+        const token = await this.jwtService.sign(roles);
 
         this.ok(res, { message: 'Аутентификация выполнена успешно', token });
     }

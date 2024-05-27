@@ -20,14 +20,10 @@ export class RolesOnUsersRepository implements IRolesOnUsersRepository {
         });
     }
 
-    async findRoleOnUser(
-        userId: number,
-        role: Roles,
-    ): Promise<RolesOnUsers | null> {
-        return this.prismaService.dbClient.rolesOnUsers.findFirst({
+    async findRoleOnUser(userId: number): Promise<RolesOnUsers[]> {
+        return this.prismaService.dbClient.rolesOnUsers.findMany({
             where: {
                 userId,
-                role,
             },
         });
     }

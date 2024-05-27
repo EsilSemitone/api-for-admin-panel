@@ -8,4 +8,5 @@ export const TYPES = {
     UserRepository: Symbol('UserRepository'),
     JWTService: Symbol('JWTService'),
     RolesOnUsersRepository: Symbol('RolesOnUsersRepository'),
+    ExeptionsFilters: Symbol('ExeptionsFilters'),
 };

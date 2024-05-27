@@ -8,6 +8,6 @@ export interface IRout {
         req: Request,
         res: Response,
         next: NextFunction,
-    ) => void | Promise<void>;
+    ) => void | Promise<void | Response>;
     middlewares?: IMiddleware[];
 }

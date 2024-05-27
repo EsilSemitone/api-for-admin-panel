@@ -16,6 +16,8 @@ import { IJWTService } from './JWTService/JWT.service.interface';
 import { JWTService } from './JWTService/JWT.service';
 import { IRolesOnUsersRepository } from './users/repository/rolesOnUsers.repository.interface';
 import { RolesOnUsersRepository } from './users/repository/rolesOnUsers.repository';
+import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
+import { ExeptionsFilters } from './exeptionFilters/exeptions.filters';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -32,17 +34,11 @@ function buidContainer(): Container {
         bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
         bind<IController>(TYPES.UsersController).to(UsersController);
 
-        bind<IConfigService>(TYPES.ConfigService)
-            .to(ConfigService)
-            .inSingletonScope();
+        bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
 
-        bind<PrismaService>(TYPES.PrismaService)
-            .to(PrismaService)
-            .inSingletonScope();
+        bind<PrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
 
-        bind<IUsersService>(TYPES.UsersService)
-            .to(UsersService)
-            .inSingletonScope();
+        bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
 
         bind<IUsersRepository>(TYPES.UserRepository)
             .to(UserRepository)
@@ -55,6 +51,8 @@ function buidContainer(): Container {
         bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(
             RolesOnUsersRepository,
         );
+
+        bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
     });
     container.load(mainModule);
     return container;

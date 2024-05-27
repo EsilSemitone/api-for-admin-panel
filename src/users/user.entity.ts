@@ -8,8 +8,12 @@ export class User {
     constructor(
         private readonly _name: string,
         private readonly _email: string,
-        password?: string,
-    ) {}
+        _password?: string,
+    ) {
+        if (_password) {
+            this._password = _password;
+        }
+    }
 
     get name(): string {
         return this._name;
@@ -27,12 +31,13 @@ export class User {
         return this._role;
     }
 
-    async setPassword(password: string, salt: string): Promise<void> {
+    async setPassword(password: string, salt: number): Promise<void> {
         this._password = await hash(password, salt);
     }
 
     async validatePassword(password: string): Promise<boolean> {
-        return compare(password, this._password);
+        const isValidPassword = await compare(password, this._password);
+        return isValidPassword;
     }
 
     setRole(role: Roles[]): void {

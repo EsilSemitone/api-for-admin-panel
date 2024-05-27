@@ -6,6 +6,7 @@ import { json } from 'body-parser';
 import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
 import { IController } from './common/controller/controller.interface';
+import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
 
 @injectable()
 export class App {
@@ -16,13 +17,14 @@ export class App {
     constructor(
         @inject(TYPES.Logger) private logger: ILogger,
         @inject(TYPES.UsersController) private usersController: IController,
+        @inject(TYPES.ExeptionsFilters) private exeptionFilters: IExeptionsFilters,
     ) {
         this.app = express();
         this.port = 8000;
     }
 
     private useExeptionFilters(): void {
-        //
+        this.app.use(this.exeptionFilters.execute.bind(this.exeptionFilters));
     }
 
     private useMiddlewares(): void {
