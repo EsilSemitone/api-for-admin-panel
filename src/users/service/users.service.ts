@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { UserChangeDto } from '../dto/users.change.dto';
+import { UserUpdateDto } from '../dto/users.change.dto';
 import { UserDeleteDto } from '../dto/users.delete.dto';
 import { UserLoginDto } from '../dto/users.login.dto';
 import { UserRegisterDto } from '../dto/users.register.dto';
@@ -70,7 +70,7 @@ export class UsersService implements IUsersService {
         return existUserInDB;
     }
 
-    changeUser(user: UserChangeDto): Promise<boolean> {
+    changeUser(user: UserUpdateDto): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
     deleteUser(user: UserDeleteDto): Promise<boolean> {

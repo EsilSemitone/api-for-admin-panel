@@ -18,6 +18,10 @@ import { IRolesOnUsersRepository } from './users/repository/rolesOnUsers.reposit
 import { RolesOnUsersRepository } from './users/repository/rolesOnUsers.repository';
 import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
 import { ExeptionsFilters } from './exeptionFilters/exeptions.filters';
+import { IMiddleware } from './common/middleware/middleware.interface';
+import { AuthGuard } from './common/guard/auth.guard';
+import { IAuthGuardFactory } from './common/guard/auth.guard.factory.interface';
+import { AuthGuardFactory } from './common/guard/auth.guard.factory';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -53,6 +57,8 @@ function buidContainer(): Container {
         );
 
         bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
+
+        bind<IAuthGuardFactory>(TYPES.AuthGuardFactory).to(AuthGuardFactory);
     });
     container.load(mainModule);
     return container;

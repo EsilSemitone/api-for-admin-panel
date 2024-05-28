@@ -5,14 +5,13 @@ import { TYPES } from '../injectsTypes';
 import { IConfigService } from '../config/config.service.interface';
 import { sign, verify as jwtVerify, JwtPayload } from 'jsonwebtoken';
 import { Roles } from '@prisma/client';
+import { CustomJWTPayload } from './JWT.types';
 
 @injectable()
 export class JWTService implements IJWTService {
     secret: string;
 
-    constructor(
-        @inject(TYPES.ConfigService) private configService: IConfigService,
-    ) {
+    constructor(@inject(TYPES.ConfigService) private configService: IConfigService) {
         this.secret = this.configService.get('SECRET');
     }
 
@@ -35,13 +34,13 @@ export class JWTService implements IJWTService {
         });
     }
 
-    verify(token: string): Promise<JwtPayload> {
-        return new Promise<JwtPayload>((resolve, reject) => {
+    verify(token: string): Promise<CustomJWTPayload> {
+        return new Promise<CustomJWTPayload>((resolve, reject) => {
             jwtVerify(token, this.secret, (error, decoder) => {
                 if (error) {
                     reject(error);
                 }
-                resolve(decoder as JwtPayload);
+                resolve(decoder as CustomJWTPayload);
             });
         });
     }

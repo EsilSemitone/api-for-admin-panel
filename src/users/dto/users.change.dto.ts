@@ -1,7 +1,7 @@
 import { Roles } from '@prisma/client';
 import { IsEmail, IsString, Length } from 'class-validator';
 
-export class UserChangeDto {
+export class UserUpdateDto {
     @Length(3, 20)
     @IsString()
     name?: string;

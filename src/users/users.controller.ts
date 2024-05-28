@@ -8,10 +8,13 @@ import { NextFunction, Request, Response } from 'express';
 import { UserRegisterDto } from './dto/users.register.dto';
 import { UserLoginDto } from './dto/users.login.dto';
 import { UserDeleteDto } from './dto/users.delete.dto';
-import { UserChangeDto } from './dto/users.change.dto';
+import { UserUpdateDto } from './dto/users.change.dto';
 import { IUsersService } from './service/users.service.interface';
 import { HttpExeption } from '../exeptionFilters/http.exeption';
 import { IJWTService } from '../JWTService/JWT.service.interface';
+import { ValidateMiddleware } from '../common/middleware/validate.middleware';
+import { IMiddleware } from '../common/middleware/middleware.interface';
+import { IAuthGuardFactory } from '../common/guard/auth.guard.factory.interface';
 
 @injectable()
 export class UsersController extends Controller implements IController {
@@ -19,13 +22,37 @@ export class UsersController extends Controller implements IController {
         @inject(TYPES.Logger) private logger: ILogger,
         @inject(TYPES.UsersService) private usersService: IUsersService,
         @inject(TYPES.JWTService) private jwtService: IJWTService,
+        @inject(TYPES.AuthGuardFactory) private authGuardFactory: IAuthGuardFactory,
     ) {
         super();
         this.bindRouts([
-            { path: '/register', method: 'post', func: this.register },
-            { path: '/login', method: 'post', func: this.login },
-            { path: '/delete', method: 'post', func: this.delete },
-            { path: '/update', method: 'post', func: this.update },
+            {
+                path: '/register',
+                method: 'post',
+                func: this.register,
+                middlewares: [new ValidateMiddleware(UserRegisterDto)],
+            },
+            {
+                path: '/login',
+                method: 'post',
+                func: this.login,
+                middlewares: [new ValidateMiddleware(UserLoginDto)],
+            },
+            {
+                path: '/delete',
+                method: 'post',
+                func: this.delete,
+                middlewares: [
+                    new ValidateMiddleware(UserDeleteDto),
+                    this.authGuardFactory.create('ADMIN'),
+                ],
+            },
+            {
+                path: '/update',
+                method: 'post',
+                func: this.update,
+                middlewares: [new ValidateMiddleware(UserUpdateDto)],
+            },
         ]);
         this.logger.success('[UsersController] Успешно подвязанны обработчики роутов');
     }
@@ -70,10 +97,12 @@ export class UsersController extends Controller implements IController {
         { body }: Request<{}, {}, UserDeleteDto>,
         res: Response,
         next: NextFunction,
-    ): Promise<void> {}
+    ): Promise<void> {
+        this.ok(res, 'Guard work');
+    }
 
     async update(
-        { body }: Request<{}, {}, UserChangeDto>,
+        { body }: Request<{}, {}, UserUpdateDto>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {}
