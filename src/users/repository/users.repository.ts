@@ -8,9 +8,7 @@ import { PrismaService } from '../../database/prisma.service';
 
 @injectable()
 export class UserRepository implements IUsersRepository {
-    constructor(
-        @inject(TYPES.PrismaService) private prismaService: PrismaService,
-    ) {}
+    constructor(@inject(TYPES.PrismaService) private prismaService: PrismaService) {}
 
     async create({ name, email, password }: User): Promise<UserModel> {
         return this.prismaService.dbClient.user.create({
@@ -37,7 +35,7 @@ export class UserRepository implements IUsersRepository {
         });
     }
 
-    async delete({ email }: User): Promise<UserModel> {
+    async delete(email: string): Promise<UserModel> {
         return this.prismaService.dbClient.user.delete({ where: { email } });
     }
 }

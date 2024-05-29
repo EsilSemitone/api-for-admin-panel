@@ -14,14 +14,16 @@ import { IUsersRepository } from './users/repository/users.repository.interface'
 import { UserRepository } from './users/repository/users.repository';
 import { IJWTService } from './JWTService/JWT.service.interface';
 import { JWTService } from './JWTService/JWT.service';
-import { IRolesOnUsersRepository } from './users/repository/rolesOnUsers.repository.interface';
-import { RolesOnUsersRepository } from './users/repository/rolesOnUsers.repository';
+import { IRolesOnUsersRepository } from './roles/repository/rolesOnUsers.repository.interface';
+import { RolesOnUsersRepository } from './roles/repository/rolesOnUsers.repository';
 import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
 import { ExeptionsFilters } from './exeptionFilters/exeptions.filters';
 import { IMiddleware } from './common/middleware/middleware.interface';
 import { AuthGuard } from './common/guard/auth.guard';
 import { IAuthGuardFactory } from './common/guard/auth.guard.factory.interface';
 import { AuthGuardFactory } from './common/guard/auth.guard.factory';
+import { IRolesService } from './roles/service/roles.service.interface';
+import { RolesService } from './roles/service/roles.service';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -59,6 +61,8 @@ function buidContainer(): Container {
         bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
 
         bind<IAuthGuardFactory>(TYPES.AuthGuardFactory).to(AuthGuardFactory);
+
+        bind<IRolesService>(TYPES.RolesService).to(RolesService);
     });
     container.load(mainModule);
     return container;

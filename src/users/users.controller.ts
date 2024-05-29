@@ -8,13 +8,13 @@ import { NextFunction, Request, Response } from 'express';
 import { UserRegisterDto } from './dto/users.register.dto';
 import { UserLoginDto } from './dto/users.login.dto';
 import { UserDeleteDto } from './dto/users.delete.dto';
-import { UserUpdateDto } from './dto/users.change.dto';
+import { UserUpdateDto } from './dto/users.update.dto';
 import { IUsersService } from './service/users.service.interface';
 import { HttpExeption } from '../exeptionFilters/http.exeption';
 import { IJWTService } from '../JWTService/JWT.service.interface';
 import { ValidateMiddleware } from '../common/middleware/validate.middleware';
-import { IMiddleware } from '../common/middleware/middleware.interface';
 import { IAuthGuardFactory } from '../common/guard/auth.guard.factory.interface';
+import { IRolesService } from '../roles/service/roles.service.interface';
 
 @injectable()
 export class UsersController extends Controller implements IController {
@@ -23,6 +23,7 @@ export class UsersController extends Controller implements IController {
         @inject(TYPES.UsersService) private usersService: IUsersService,
         @inject(TYPES.JWTService) private jwtService: IJWTService,
         @inject(TYPES.AuthGuardFactory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.RolesService) private rolesService: IRolesService,
     ) {
         super();
         this.bindRouts([
@@ -98,7 +99,31 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
-        this.ok(res, 'Guard work');
+        const user = await this.usersService.getUser(body.email);
+        if (!user) {
+            return next(
+                new HttpExeption(
+                    'Ошибка при удалении',
+                    404,
+                    'Пользователя с таким email не существует',
+                ),
+            );
+        }
+
+        const roles = await this.rolesService.get(user.id);
+        const userCanBeDelete = !roles.includes('SUPER_ADMIN');
+
+        if (!userCanBeDelete) {
+            return next(
+                new HttpExeption(
+                    'Ошибка при удалении',
+                    405,
+                    'Этот пользователь не может быть удален',
+                ),
+            );
+        }
+
+        await this.usersService.deleteUser(body.email);
     }
 
     async update(

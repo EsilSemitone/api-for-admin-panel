@@ -1,6 +1,5 @@
 import 'reflect-metadata';
-import { UserUpdateDto } from '../dto/users.change.dto';
-import { UserDeleteDto } from '../dto/users.delete.dto';
+import { UserUpdateDto } from '../dto/users.update.dto';
 import { UserLoginDto } from '../dto/users.login.dto';
 import { UserRegisterDto } from '../dto/users.register.dto';
 import { User } from '../user.entity';
@@ -11,7 +10,7 @@ import { IConfigService } from '../../config/config.service.interface';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from '../repository/users.repository.interface';
 import { Roles, RolesOnUsers, User as UserModel } from '@prisma/client';
-import { IRolesOnUsersRepository } from '../repository/rolesOnUsers.repository.interface';
+import { IRolesOnUsersRepository } from '../../roles/repository/rolesOnUsers.repository.interface';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -44,7 +43,9 @@ export class UsersService implements IUsersService {
         const salt = this.configService.get('SALT');
         await user.setPassword(password, Number(salt));
 
-        await this.usersRepository.create(user);
+        const { id } = await this.usersRepository.create(user);
+        this.rolesOnUsersRepository.createRoleOnUser(id, 'USER');
+
         return true;
     }
 
@@ -73,7 +74,7 @@ export class UsersService implements IUsersService {
     changeUser(user: UserUpdateDto): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
-    deleteUser(user: UserDeleteDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    async deleteUser(email: string): Promise<UserModel> {
+        return await this.usersRepository.delete(email);
     }
 }

@@ -10,4 +10,5 @@ export const TYPES = {
     RolesOnUsersRepository: Symbol('RolesOnUsersRepository'),
     ExeptionsFilters: Symbol('ExeptionsFilters'),
     AuthGuardFactory: Symbol('AuthGuardFactory'),
+    RolesService: Symbol('RolesService'),
 };
