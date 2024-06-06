@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { UserUpdateDto } from '../dto/users.update.dto';
+import { UserUpdateDto, UserUpdateDtoParamsTypes } from '../dto/users.update.dto';
 import { UserLoginDto } from '../dto/users.login.dto';
 import { UserRegisterDto } from '../dto/users.register.dto';
 import { User } from '../user.entity';
@@ -9,7 +9,7 @@ import { ILogger } from '../../logger/logger.service.interface';
 import { IConfigService } from '../../config/config.service.interface';
 import { IUsersService } from './users.service.interface';
 import { IUsersRepository } from '../repository/users.repository.interface';
-import { Roles, RolesOnUsers, User as UserModel } from '@prisma/client';
+import { User as UserModel } from '@prisma/client';
 import { IRolesOnUsersRepository } from '../../roles/repository/rolesOnUsers.repository.interface';
 
 @injectable()
@@ -26,10 +26,8 @@ export class UsersService implements IUsersService {
         return this.usersRepository.find(email);
     }
 
-    async getRoles(userId: number): Promise<Roles[]> {
-        const rolesOnUser = await this.rolesOnUsersRepository.findRoleOnUser(userId);
-        const roles = rolesOnUser.map(roleOnUser => roleOnUser.role);
-        return roles;
+    async getUserById(id: number): Promise<UserModel | null> {
+        return this.usersRepository.findById(id);
     }
 
     async createUser({ name, email, password }: UserRegisterDto): Promise<boolean> {
@@ -44,7 +42,7 @@ export class UsersService implements IUsersService {
         await user.setPassword(password, Number(salt));
 
         const { id } = await this.usersRepository.create(user);
-        this.rolesOnUsersRepository.createRoleOnUser(id, 'USER');
+        this.rolesOnUsersRepository.createRoleOnUser(id, 'ADMIN');
 
         return true;
     }
@@ -56,11 +54,7 @@ export class UsersService implements IUsersService {
             return null;
         }
 
-        const user = new User(
-            existUserInDB.name,
-            existUserInDB.email,
-            existUserInDB.password,
-        );
+        const user = new User(existUserInDB.name, existUserInDB.email, existUserInDB.password);
 
         const isValidePassword = await user.validatePassword(password);
 
@@ -71,10 +65,23 @@ export class UsersService implements IUsersService {
         return existUserInDB;
     }
 
-    changeUser(user: UserUpdateDto): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    async updateUser(
+        { paramName, data }: UserUpdateDto,
+        userId: number,
+    ): Promise<UserModel | null> {
+        const existUserInDB = await this.usersRepository.findById(userId);
+
+        if (!existUserInDB) {
+            return null;
+        }
+
+        existUserInDB[paramName] = data[paramName] as string;
+
+        const updatedUser = await this.usersRepository.update(userId, existUserInDB);
+        return updatedUser;
     }
-    async deleteUser(email: string): Promise<UserModel> {
-        return await this.usersRepository.delete(email);
+
+    async deleteUser(id: number): Promise<UserModel> {
+        return this.usersRepository.delete(id);
     }
 }

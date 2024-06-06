@@ -18,6 +18,7 @@ export class App {
         @inject(TYPES.Logger) private logger: ILogger,
         @inject(TYPES.UsersController) private usersController: IController,
         @inject(TYPES.ExeptionsFilters) private exeptionFilters: IExeptionsFilters,
+        @inject(TYPES.AdminController) private adminController: IController,
     ) {
         this.app = express();
         this.port = 8000;
@@ -33,6 +34,7 @@ export class App {
 
     private useRoutes(): void {
         this.app.use('/users', this.usersController.router);
+        this.app.use('/admin', this.adminController.router);
         // this.app.use('/products');
     }
 

@@ -1,13 +1,13 @@
 import { Roles, User as UserModel } from '@prisma/client';
 import { UserLoginDto } from '../dto/users.login.dto';
 import { UserRegisterDto } from '../dto/users.register.dto';
-import { UserUpdateDto } from '../dto/users.update.dto';
+import { UserUpdateDto, UserUpdateDtoParamsTypes } from '../dto/users.update.dto';
 
 export interface IUsersService {
     getUser(email: string): Promise<UserModel | null>;
-    getRoles(userId: number): Promise<Roles[]>;
+    getUserById(id: number): Promise<UserModel | null>;
     createUser(user: UserRegisterDto): Promise<boolean>;
     validateUser(user: UserLoginDto): Promise<null | UserModel>;
-    changeUser(user: UserUpdateDto): Promise<boolean>;
-    deleteUser(email: string): Promise<UserModel>;
+    updateUser(dto: UserUpdateDto, userId: number): Promise<UserModel | null>;
+    deleteUser(id: number): Promise<UserModel>;
 }

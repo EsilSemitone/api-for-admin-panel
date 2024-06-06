@@ -24,7 +24,22 @@ export class RolesService implements IRolesService {
         });
     }
 
-    delete(userId: number, role: Roles): Promise<Prisma.BatchPayload> {
+    async has(userId: number, role: Roles): Promise<Boolean> {
+        const userRoles = await this.get(userId);
+        const userHasRole = userRoles.includes(role);
+
+        if (!userHasRole) {
+            return false;
+        }
+
+        return true;
+    }
+
+    async delete(userId: number, role: Roles): Promise<Prisma.BatchPayload> {
         return this.rolesRepository.deleteRoleOnUser(userId, role);
+    }
+
+    async getAll(): Promise<RolesOnUsers[]> {
+        return this.rolesRepository.getAll();
     }
 }

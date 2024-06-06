@@ -34,4 +34,8 @@ export class RolesOnUsersRepository implements IRolesOnUsersRepository {
             },
         });
     }
+
+    async getAll(): Promise<RolesOnUsers[]> {
+        return this.prismaService.dbClient.rolesOnUsers.findMany();
+    }
 }

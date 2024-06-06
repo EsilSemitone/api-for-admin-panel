@@ -1,3 +1,5 @@
+import { AdminController } from './admin/controller/admin.controller';
+
 export const TYPES = {
     Logger: Symbol('Logger'),
     App: Symbol('App'),
@@ -11,4 +13,5 @@ export const TYPES = {
     ExeptionsFilters: Symbol('ExeptionsFilters'),
     AuthGuardFactory: Symbol('AuthGuardFactory'),
     RolesService: Symbol('RolesService'),
+    AdminController: Symbol('AdminController'),
 };

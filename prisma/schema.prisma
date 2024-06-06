@@ -44,7 +44,7 @@ model RolesOnUsers {
   id     Int   @id @default(autoincrement())
   userId Int
   role   Roles
-  user   User  @relation(fields: [userId], references: [id])
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {

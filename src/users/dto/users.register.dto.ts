@@ -11,6 +11,6 @@ export class UserRegisterDto {
     email: string;
 
     @Length(8)
-    @IsString()
+    @IsString({ message: 'Передана не строка' })
     password: string;
 }

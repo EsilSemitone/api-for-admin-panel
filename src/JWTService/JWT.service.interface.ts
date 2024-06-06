@@ -3,6 +3,6 @@ import { JwtPayload } from 'jsonwebtoken';
 import { CustomJWTPayload } from './JWT.types';
 
 export interface IJWTService {
-    sign(role: Roles[]): Promise<string>;
+    sign(role: Roles[], userId: number): Promise<string>;
     verify(token: string): Promise<CustomJWTPayload>;
 }

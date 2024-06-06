@@ -1,18 +1,48 @@
-import { Roles } from '@prisma/client';
-import { IsEmail, IsString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+    IsEmail,
+    IsIn,
+    IsInstance,
+    IsString,
+    Length,
+    ValidateIf,
+    ValidateNested,
+} from 'class-validator';
 
-export class UserUpdateDto {
-    @Length(3, 20)
-    @IsString()
+const params = {
+    name: 'name',
+    email: 'email',
+    password: 'password',
+} as const;
+
+export type UserUpdateDtoParamsTypes = keyof typeof params;
+
+export class DataUpdate {
+    @ValidateIf(o => o.name !== undefined)
+    @Length(3, 20, { message: 'Имя должно быть длиннее 3 и короче 20 символов' })
+    @IsString({ message: 'Передана не строка' })
     name?: string;
 
+    @ValidateIf(o => o.email !== undefined)
     @IsEmail()
-    @IsString()
+    @IsString({ message: 'Передана не строка' })
     email?: string;
 
+    @ValidateIf(o => o.password !== undefined)
     @Length(8)
-    @IsString()
+    @IsString({ message: 'Передана не строка' })
     password?: string;
+}
 
-    role?: Roles;
+export class UserUpdateDto {
+    @IsEmail()
+    @IsString()
+    email: string;
+
+    @IsIn([...Object.values(params)], { message: 'Передан не верный аргумент' })
+    paramName: UserUpdateDtoParamsTypes;
+
+    @ValidateNested({ message: 'Не допустимый формат данных' })
+    @Type(() => DataUpdate)
+    data: DataUpdate;
 }

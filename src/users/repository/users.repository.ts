@@ -5,6 +5,7 @@ import { User } from '../user.entity';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../injectsTypes';
 import { PrismaService } from '../../database/prisma.service';
+import { DataUpdate, UserUpdateDtoParamsTypes } from '../dto/users.update.dto';
 
 @injectable()
 export class UserRepository implements IUsersRepository {
@@ -24,9 +25,17 @@ export class UserRepository implements IUsersRepository {
         });
     }
 
-    async update({ name, email, password }: User): Promise<UserModel> {
+    async findById(id: number): Promise<UserModel | null> {
+        return this.prismaService.dbClient.user.findFirst({
+            where: {
+                id,
+            },
+        });
+    }
+
+    async update(id: number, { name, email, password }: UserModel): Promise<UserModel> {
         return this.prismaService.dbClient.user.update({
-            where: { email },
+            where: { id },
             data: {
                 name,
                 email,
@@ -35,7 +44,7 @@ export class UserRepository implements IUsersRepository {
         });
     }
 
-    async delete(email: string): Promise<UserModel> {
-        return this.prismaService.dbClient.user.delete({ where: { email } });
+    async delete(id: number): Promise<UserModel> {
+        return this.prismaService.dbClient.user.delete({ where: { id } });
     }
 }

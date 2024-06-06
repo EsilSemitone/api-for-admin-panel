@@ -3,11 +3,7 @@ import { IMiddleware } from '../middleware/middleware.interface';
 
 export interface IRout {
     path: string;
-    method: keyof Pick<Router, 'get' | 'post' | 'put' | 'delete'>;
-    func: (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ) => void | Promise<void | Response>;
+    method: keyof Pick<Router, 'get' | 'post' | 'put' | 'delete' | 'patch'>;
+    func: (req: Request, res: Response, next: NextFunction) => void | Promise<void | Response>;
     middlewares?: IMiddleware[];
 }

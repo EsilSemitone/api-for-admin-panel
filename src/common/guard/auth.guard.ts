@@ -23,10 +23,11 @@ export class AuthGuard implements IMiddleware {
             return next(this.exeption);
         }
 
-        const payload = await this.jwtService.verify(authorization);
-        const userRoles = payload.role;
+        const { userId, role } = await this.jwtService.verify(authorization);
+        req.id = userId;
+        req.role = role;
 
-        const userHasAcces = userRoles.includes(this.role);
+        const userHasAcces = role.includes(this.role);
 
         if (!userHasAcces) {
             return next(this.exeption);

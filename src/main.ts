@@ -24,6 +24,7 @@ import { IAuthGuardFactory } from './common/guard/auth.guard.factory.interface';
 import { AuthGuardFactory } from './common/guard/auth.guard.factory';
 import { IRolesService } from './roles/service/roles.service.interface';
 import { RolesService } from './roles/service/roles.service';
+import { AdminController } from './admin/controller/admin.controller';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -46,23 +47,20 @@ function buidContainer(): Container {
 
         bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
 
-        bind<IUsersRepository>(TYPES.UserRepository)
-            .to(UserRepository)
-            .inSingletonScope();
+        bind<IUsersRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
 
         bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
 
         bind<App>(TYPES.App).to(App).inSingletonScope();
 
-        bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(
-            RolesOnUsersRepository,
-        );
+        bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(RolesOnUsersRepository);
 
         bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
 
         bind<IAuthGuardFactory>(TYPES.AuthGuardFactory).to(AuthGuardFactory);
 
         bind<IRolesService>(TYPES.RolesService).to(RolesService);
+        bind<IController>(TYPES.AdminController).to(AdminController);
     });
     container.load(mainModule);
     return container;
