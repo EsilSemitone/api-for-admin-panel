@@ -1,5 +1,3 @@
-import { AdminController } from './admin/controller/admin.controller';
-
 export const TYPES = {
     Logger: Symbol('Logger'),
     App: Symbol('App'),

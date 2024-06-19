@@ -25,6 +25,7 @@ import { AuthGuardFactory } from './common/guard/auth.guard.factory';
 import { IRolesService } from './roles/service/roles.service.interface';
 import { RolesService } from './roles/service/roles.service';
 import { AdminController } from './admin/controller/admin.controller';
+import { constants } from 'buffer';
 
 type MainReturnType = { app: App; container: Container };
 
@@ -38,31 +39,24 @@ async function main(): Promise<MainReturnType> {
 function buidContainer(): Container {
     const container = new Container();
     const mainModule = new ContainerModule(bind => {
-        bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
-        bind<IController>(TYPES.UsersController).to(UsersController);
-
-        bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
-
-        bind<PrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
-
-        bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
-
-        bind<IUsersRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
-
-        bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
-
         bind<App>(TYPES.App).to(App).inSingletonScope();
-
+        bind<IController>(TYPES.UsersController).to(UsersController);
+        bind<IUsersRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
         bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(RolesOnUsersRepository);
-
         bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
-
         bind<IAuthGuardFactory>(TYPES.AuthGuardFactory).to(AuthGuardFactory);
-
-        bind<IRolesService>(TYPES.RolesService).to(RolesService);
         bind<IController>(TYPES.AdminController).to(AdminController);
     });
+    const servicesModule = new ContainerModule(bind => {
+        bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
+        bind<PrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
+        bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
+        bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
+        bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
+        bind<IRolesService>(TYPES.RolesService).to(RolesService);
+    });
     container.load(mainModule);
+    container.load(servicesModule);
     return container;
 }
 

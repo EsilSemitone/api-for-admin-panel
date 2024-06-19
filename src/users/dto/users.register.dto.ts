@@ -1,4 +1,3 @@
-import { Roles } from '@prisma/client';
 import { Length, IsString, IsEmail } from 'class-validator';
 
 export class UserRegisterDto {

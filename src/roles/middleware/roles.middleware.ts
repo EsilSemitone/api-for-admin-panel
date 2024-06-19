@@ -29,7 +29,11 @@ export class RolesQueryValidateMiddleware implements IMiddleware {
             return next();
         }
 
-        return this.validateSuperAdmin(role, req, next);
+        if (this.userRole === 'SUPER_ADMIN') {
+            return this.validateSuperAdmin(role, req, next);
+        }
+
+        return next(new HttpExeption('У пользователя недостаточно прав', 403));
     }
 
     validateSuperAdmin(role: unknown, req: Request, next: NextFunction): void {

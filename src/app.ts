@@ -42,7 +42,11 @@ export class App {
         this.useMiddlewares();
         this.useRoutes();
         this.useExeptionFilters();
-        this.app.listen(this.port);
+        this.server = this.app.listen(this.port);
         this.logger.success(`Сервер запущен на порту ${this.port}`);
+    }
+
+    public close(): void {
+        this.server.close();
     }
 }

@@ -72,7 +72,7 @@ export class UsersController extends Controller implements IController {
             return next(
                 new HttpExeption(
                     'Пользователь уже зарегистрирован',
-                    409,
+                    422,
                     '[UsersController.register]',
                 ),
             );
@@ -98,7 +98,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async delete(
-        { body, id }: Request<{}, {}, UserDeleteDto>,
+        { id }: Request<{}, {}, UserDeleteDto>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
@@ -116,11 +116,7 @@ export class UsersController extends Controller implements IController {
 
         if (!updatedUser) {
             return next(
-                new HttpExeption(
-                    'Ошибка при обновлении данных',
-                    404,
-                    'Пользователя с таким email не существует',
-                ),
+                new HttpExeption('Ошибка при обновлении данных', 404, 'Не верно переданы данные'),
             );
         }
 
