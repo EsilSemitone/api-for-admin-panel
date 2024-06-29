@@ -15,6 +15,7 @@ import { IRolesService } from '../roles/interfaces/roles.service.interface';
 import { Controller } from '../common/abstract.controller';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { IUsersService } from './interfaces/users.service.interface';
+import { RequestFields } from '../types/extendedTypes';
 
 @injectable()
 export class UsersController extends Controller implements IController {
@@ -62,7 +63,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async register(
-        { body }: Request<{}, {}, UserRegisterDto>,
+        { body }: Request<{}, {}, UserRegisterDto, {}, {}, RequestFields.NONE>,
         res: Response,
         next: NextFunction,
     ): Promise<Response | void> {
@@ -82,7 +83,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async login(
-        { body }: Request<{}, {}, UserLoginDto>,
+        { body }: Request<{}, {}, UserLoginDto, {}, {}, RequestFields.NONE>,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
@@ -98,21 +99,21 @@ export class UsersController extends Controller implements IController {
     }
 
     async delete(
-        { id }: Request<{}, {}, UserDeleteDto>,
+        { id }: Request<{}, {}, UserDeleteDto, {}, {}, RequestFields.ID>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
-        await this.usersService.deleteUser(id as number);
+        await this.usersService.deleteUser(id);
 
         this.ok(res, 'Пользователь успешно удален');
     }
 
     async update(
-        { body, id }: Request<{}, {}, UserUpdateDto>,
+        { body, id }: Request<{}, {}, UserUpdateDto, {}, {}, RequestFields.ID>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
-        const updatedUser = await this.usersService.updateUser(body, id as number);
+        const updatedUser = await this.usersService.updateUser(body, id);
 
         if (!updatedUser) {
             return next(
