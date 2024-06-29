@@ -5,8 +5,8 @@ import { Server } from 'node:http';
 import { json } from 'body-parser';
 import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
-import { IController } from './common/interfaces/controller.interface';
 import { IExceptionsFilters } from './exceptionFilters/exceptions.filters.interface';
+import { IController } from './common/interfaces/controller.interface';
 
 @injectable()
 export class App {

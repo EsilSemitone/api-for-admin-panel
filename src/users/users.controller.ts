@@ -15,7 +15,6 @@ import { IRolesService } from '../roles/interfaces/roles.service.interface';
 import { Controller } from '../common/abstract.controller';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { IUsersService } from './interfaces/users.service.interface';
-import { RequestFields } from '../types/extendedTypes';
 
 @injectable()
 export class UsersController extends Controller implements IController {
@@ -63,7 +62,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async register(
-        { body }: Request<{}, {}, UserRegisterDto, {}, {}, RequestFields.NOT_EXIST>,
+        { body }: Request<{}, {}, UserRegisterDto, {}, {}>,
         res: Response,
         next: NextFunction,
     ): Promise<Response | void> {
@@ -83,7 +82,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async login(
-        { body }: Request<{}, {}, UserLoginDto, {}, {}, RequestFields.NOT_EXIST>,
+        { body }: Request<{}, {}, UserLoginDto, {}, {}>,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
@@ -99,20 +98,41 @@ export class UsersController extends Controller implements IController {
     }
 
     async delete(
-        { id }: Request<{}, {}, UserDeleteDto, {}, {}, RequestFields.EXIST>,
+        req: Request<{}, {}, UserDeleteDto, {}, {}>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
-        await this.usersService.deleteUser(id);
+        if (typeof req.id !== 'number') {
+            return next(
+                new HttpException(
+                    'Произошла ошибка при парсинге роли из токена',
+                    400,
+                    JSON.stringify(req),
+                ),
+            );
+        }
+        await this.usersService.deleteUser(req.id);
 
         this.ok(res, 'Пользователь успешно удален');
     }
 
     async update(
-        { body, id }: Request<{}, {}, UserUpdateDto, {}, {}, RequestFields.EXIST>,
+        req: Request<{}, {}, UserUpdateDto, {}, {}>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        const { body, id } = req;
+
+        if (typeof id !== 'number') {
+            return next(
+                new HttpException(
+                    'Произошла ошибка при парсинге роли из токена',
+                    400,
+                    JSON.stringify(req),
+                ),
+            );
+        }
+
         const updatedUser = await this.usersService.updateUser(body, id);
 
         if (!updatedUser) {

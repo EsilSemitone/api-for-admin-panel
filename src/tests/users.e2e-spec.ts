@@ -139,12 +139,14 @@ describe('users e2e', () => {
 
         const token = loginAdminResponse.body.token;
 
-        const apoinGeneralWarehousManResponse = await request(application.app)
+        const appointGeneralWarehouseManResponse = await request(application.app)
             .post(`/admin/appoint`)
-            .query({ email: userRegisterDtoExist.email })
-            .set({ Authorization: `Bear ${token}` });
+            .set({ Authorization: `Bear ${token}` })
+            .send({
+                email: userRegisterDtoExist.email,
+            });
 
-        expect(apoinGeneralWarehousManResponse.statusCode).toBe(200);
+        expect(appointGeneralWarehouseManResponse.statusCode).toBe(200);
     });
 
     it('appoint role error', async () => {
@@ -154,12 +156,14 @@ describe('users e2e', () => {
 
         const token = loginAdminResponse.body.token;
 
-        const apoinGeneralWarehousManResponse = await request(application.app)
+        const appointGeneralWarehouseManResponse = await request(application.app)
             .post(`/admin/appoint`)
-            .query({ email: userRegisterDtoExist.email })
-            .set({ Authorization: `Bear ${token}` });
+            .set({ Authorization: `Bear ${token}` })
+            .send({
+                email: userRegisterDtoExist.email,
+            });
 
-        expect(apoinGeneralWarehousManResponse.statusCode).toBe(403);
+        expect(appointGeneralWarehouseManResponse.statusCode).toBe(403);
     });
 
     it('remove role success', async () => {
@@ -169,8 +173,8 @@ describe('users e2e', () => {
 
         const removeGeneralWarehouseRoleResponse = await request(application.app)
             .delete('/admin/remove')
-            .query({ email: 'GENERAL_WAREHOUS@mail.ru', role: 'GENERAL_WAREHOUS' })
-            .set({ Authorization: `Bear ${token}` });
+            .set({ Authorization: `Bear ${token}` })
+            .send({ email: 'GENERAL_WAREHOUS@mail.ru' });
 
         expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(200);
     });
@@ -182,8 +186,8 @@ describe('users e2e', () => {
 
         const removeGeneralWarehouseRoleResponse = await request(application.app)
             .delete('/admin/remove')
-            .query({ email: 'GENERAL_WAREHOUS_1@mail.ru', role: 'GENERAL_WAREHOUS' })
-            .set({ Authorization: `Bear ${token}` });
+            .set({ Authorization: `Bear ${token}` })
+            .send({ email: 'GENERAL_WAREHOUSd_1@mail.ru' });
 
         expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(401);
     });

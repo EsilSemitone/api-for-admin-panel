@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Response, Router } from 'express';
+import { IRouterMatcher, Response, Router } from 'express';
 import { IController } from './interfaces/controller.interface';
 import { IRout } from './interfaces/routs.interface';
 import { injectable } from 'inversify';
@@ -14,6 +14,7 @@ export abstract class Controller implements IController {
             const handler = func.bind(this);
             const executers = middlewaresArray ? [...middlewaresArray, handler] : handler;
 
+            //Здесь все ломается если я добавляю обязательные поля в Request
             this.router[method](path, executers);
         }
     }

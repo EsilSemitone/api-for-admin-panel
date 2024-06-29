@@ -2,7 +2,7 @@ export class HttpException extends Error {
     constructor(
         message: string,
         public statusCode: number,
-        public context?: string,
+        public context?: any,
     ) {
         super(message);
     }

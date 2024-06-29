@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from 'express';
 import { Roles } from '@prisma/client';
 import { HttpException } from '../exceptionFilters/http.exception';
 import { IJwtService } from '../jwtService/jwt.service.interface';
-import { RequestFields } from '../types/extendedTypes';
 
 export class AuthGuard implements IMiddleware {
     exception: HttpException = new HttpException(
@@ -18,11 +17,7 @@ export class AuthGuard implements IMiddleware {
         private jwtService: IJwtService,
     ) {}
 
-    async execute(
-        req: Request<{}, {}, any, {}, {}, RequestFields.EXIST>,
-        res: Response,
-        next: NextFunction,
-    ): Promise<void> {
+    async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
         const authorization = req.headers.authorization?.split(' ')[1];
         if (!authorization) {
             return next(this.exception);

@@ -10,7 +10,6 @@ import { HttpException } from '../exceptionFilters/http.exception';
 import { Controller } from '../common/abstract.controller';
 import { IUsersService } from '../users/interfaces/users.service.interface';
 import { AppointRoleDto } from './appoint.role.dto';
-import { RequestFields } from '../types/extendedTypes';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { RemoveRoleDto } from './remove.role.dto';
 
@@ -46,7 +45,7 @@ export class AdminController extends Controller implements IController {
     }
 
     async appointRole(
-        { body }: Request<{}, {}, AppointRoleDto, {}, {}, RequestFields.NOT_EXIST>,
+        { body }: Request,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
@@ -71,7 +70,7 @@ export class AdminController extends Controller implements IController {
     }
 
     async removeRole(
-        { body }: Request<{}, {}, RemoveRoleDto, {}, {}, RequestFields.NOT_EXIST>,
+        { body }: Request,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
