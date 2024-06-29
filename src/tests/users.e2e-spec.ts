@@ -2,7 +2,6 @@ import { App } from '../app';
 import { box } from '../main';
 import request from 'supertest';
 import { LocalPrismaService, endingTest, mainSeed } from './seed';
-import { Roles } from '@prisma/client';
 
 let application: App;
 let prismaService: LocalPrismaService;

@@ -1,8 +1,7 @@
 import { Roles } from '@prisma/client';
-import { JwtPayload } from 'jsonwebtoken';
-import { CustomJWTPayload } from './JWT.types';
+import { CustomJWTPayload } from './jwt.types';
 
-export interface IJWTService {
+export interface IJwtService {
     sign(role: Roles[], userId: number): Promise<string>;
     verify(token: string): Promise<CustomJWTPayload>;
 }

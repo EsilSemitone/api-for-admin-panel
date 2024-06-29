@@ -1,17 +1,17 @@
 import 'reflect-metadata';
-import { IJWTService } from './JWT.service.interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../injectsTypes';
 import { IConfigService } from '../config/config.service.interface';
-import { sign, verify as jwtVerify, JwtPayload } from 'jsonwebtoken';
+import { sign, verify as jwtVerify } from 'jsonwebtoken';
 import { Roles } from '@prisma/client';
-import { CustomJWTPayload } from './JWT.types';
+import { IJwtService } from './jwt.service.interface';
+import { CustomJWTPayload } from './jwt.types';
 
 @injectable()
-export class JWTService implements IJWTService {
+export class JWTService implements IJwtService {
     secret: string;
 
-    constructor(@inject(TYPES.ConfigService) private configService: IConfigService) {
+    constructor(@inject(TYPES.Config_Service) private configService: IConfigService) {
         this.secret = this.configService.get('SECRET');
     }
 

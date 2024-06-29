@@ -3,7 +3,7 @@ import { hash, compare } from 'bcryptjs';
 
 export class User {
     _password: string;
-    _role: Roles[] = ['USER'];
+    _roles: Roles[] = ['USER'];
 
     constructor(
         private readonly _name: string,
@@ -28,7 +28,7 @@ export class User {
     }
 
     get role(): Roles[] {
-        return this._role;
+        return this._roles;
     }
 
     async setPassword(password: string, salt: number): Promise<void> {
@@ -41,6 +41,6 @@ export class User {
     }
 
     setRole(role: Roles[]): void {
-        this._role = role;
+        this._roles = role;
     }
 }

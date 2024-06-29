@@ -3,57 +3,54 @@ import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
 import { LoggerService } from './logger/logger.service';
 import { App } from './app';
-import { IController } from './common/controller/controller.interface';
+import { IController } from './common/interfaces/controller.interface';
 import { UsersController } from './users/users.controller';
 import { IConfigService } from './config/config.service.interface';
 import { ConfigService } from './config/config.service';
 import { PrismaService } from './database/prisma.service';
-import { IUsersService } from './users/service/users.service.interface';
-import { UsersService } from './users/service/users.service';
-import { IUsersRepository } from './users/repository/users.repository.interface';
-import { UserRepository } from './users/repository/users.repository';
-import { IJWTService } from './JWTService/JWT.service.interface';
-import { JWTService } from './JWTService/JWT.service';
-import { IRolesOnUsersRepository } from './roles/repository/rolesOnUsers.repository.interface';
-import { RolesOnUsersRepository } from './roles/repository/rolesOnUsers.repository';
-import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
-import { ExeptionsFilters } from './exeptionFilters/exeptions.filters';
-import { IMiddleware } from './common/middleware/middleware.interface';
-import { AuthGuard } from './common/guard/auth.guard';
-import { IAuthGuardFactory } from './common/guard/auth.guard.factory.interface';
-import { AuthGuardFactory } from './common/guard/auth.guard.factory';
-import { IRolesService } from './roles/service/roles.service.interface';
-import { RolesService } from './roles/service/roles.service';
-import { AdminController } from './admin/controller/admin.controller';
-import { constants } from 'buffer';
+import { IUsersRepository } from './users/interfaces/users.repository.interface';
+import { UserRepository } from './users/users.repository';
+import { IJwtService } from './jwtService/jwt.service.interface';
+import { JWTService } from './jwtService/jwt.service';
+import { IRolesOnUsersRepository } from './roles/interfaces/roles.repository.interface';
+import { RolesOnUsersRepository } from './roles/roles.repository';
+import { IExceptionsFilters } from './exceptionFilters/exceptions.filters.interface';
+import { ExceptionsFilters } from './exceptionFilters/exceptions.filters';
+import { IAuthGuardFactory } from './common/interfaces/auth.guard.factory.interface';
+import { IRolesService } from './roles/interfaces/roles.service.interface';
+import { RolesService } from './roles/roles.service';
+import { AdminController } from './admin/admin.controller';
+import { AuthGuardFactory } from './common/auth.guard.factory';
+import { IUsersService } from './users/interfaces/users.service.interface';
+import { UsersService } from './users/users.service';
 
 type MainReturnType = { app: App; container: Container };
 
 async function main(): Promise<MainReturnType> {
-    const container = buidContainer();
+    const container = buildContainer();
     const app = container.get<App>(TYPES.App);
     await app.init();
     return { app, container };
 }
 
-function buidContainer(): Container {
+function buildContainer(): Container {
     const container = new Container();
     const mainModule = new ContainerModule(bind => {
         bind<App>(TYPES.App).to(App).inSingletonScope();
-        bind<IController>(TYPES.UsersController).to(UsersController);
-        bind<IUsersRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
-        bind<IRolesOnUsersRepository>(TYPES.RolesOnUsersRepository).to(RolesOnUsersRepository);
-        bind<IExeptionsFilters>(TYPES.ExeptionsFilters).to(ExeptionsFilters);
-        bind<IAuthGuardFactory>(TYPES.AuthGuardFactory).to(AuthGuardFactory);
-        bind<IController>(TYPES.AdminController).to(AdminController);
+        bind<IController>(TYPES.Users_Controller).to(UsersController);
+        bind<IUsersRepository>(TYPES.User_Repository).to(UserRepository).inSingletonScope();
+        bind<IRolesOnUsersRepository>(TYPES.Roles_Repository).to(RolesOnUsersRepository);
+        bind<IExceptionsFilters>(TYPES.Exceptions_Filters).to(ExceptionsFilters);
+        bind<IAuthGuardFactory>(TYPES.Auth_Guard_Factory).to(AuthGuardFactory);
+        bind<IController>(TYPES.Admin_Controller).to(AdminController);
     });
     const servicesModule = new ContainerModule(bind => {
         bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
-        bind<PrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
-        bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
-        bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
-        bind<IJWTService>(TYPES.JWTService).to(JWTService).inSingletonScope();
-        bind<IRolesService>(TYPES.RolesService).to(RolesService);
+        bind<PrismaService>(TYPES.Prisma_Service).to(PrismaService).inSingletonScope();
+        bind<IConfigService>(TYPES.Config_Service).to(ConfigService).inSingletonScope();
+        bind<IUsersService>(TYPES.Users_Service).to(UsersService).inSingletonScope();
+        bind<IJwtService>(TYPES.Jwt_Service).to(JWTService).inSingletonScope();
+        bind<IRolesService>(TYPES.Roles_Service).to(RolesService);
     });
     container.load(mainModule);
     container.load(servicesModule);

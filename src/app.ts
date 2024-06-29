@@ -5,8 +5,8 @@ import { Server } from 'node:http';
 import { json } from 'body-parser';
 import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
-import { IController } from './common/controller/controller.interface';
-import { IExeptionsFilters } from './exeptionFilters/exeptions.filters.interface';
+import { IController } from './common/interfaces/controller.interface';
+import { IExceptionsFilters } from './exceptionFilters/exceptions.filters.interface';
 
 @injectable()
 export class App {
@@ -16,16 +16,16 @@ export class App {
 
     constructor(
         @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.UsersController) private usersController: IController,
-        @inject(TYPES.ExeptionsFilters) private exeptionFilters: IExeptionsFilters,
-        @inject(TYPES.AdminController) private adminController: IController,
+        @inject(TYPES.Users_Controller) private usersController: IController,
+        @inject(TYPES.Exceptions_Filters) private exceptionFilters: IExceptionsFilters,
+        @inject(TYPES.Admin_Controller) private adminController: IController,
     ) {
         this.app = express();
         this.port = 8000;
     }
 
-    private useExeptionFilters(): void {
-        this.app.use(this.exeptionFilters.execute.bind(this.exeptionFilters));
+    private useExceptionFilters(): void {
+        this.app.use(this.exceptionFilters.execute.bind(this.exceptionFilters));
     }
 
     private useMiddlewares(): void {
@@ -35,13 +35,12 @@ export class App {
     private useRoutes(): void {
         this.app.use('/users', this.usersController.router);
         this.app.use('/admin', this.adminController.router);
-        // this.app.use('/products');
     }
 
     public async init(): Promise<void> {
         this.useMiddlewares();
         this.useRoutes();
-        this.useExeptionFilters();
+        this.useExceptionFilters();
         this.server = this.app.listen(this.port);
         this.logger.success(`Сервер запущен на порту ${this.port}`);
     }

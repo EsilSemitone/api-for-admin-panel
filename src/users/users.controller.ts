@@ -1,29 +1,29 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { Controller } from '../common/controller/abstract.controller';
-import { IController } from '../common/controller/controller.interface';
+import { IController } from '../common/interfaces/controller.interface';
 import { TYPES } from '../injectsTypes';
 import { ILogger } from '../logger/logger.service.interface';
 import { NextFunction, Request, Response } from 'express';
 import { UserRegisterDto } from './dto/users.register.dto';
 import { UserLoginDto } from './dto/users.login.dto';
 import { UserDeleteDto } from './dto/users.delete.dto';
-import { UserUpdateDto, UserUpdateDtoParamsTypes } from './dto/users.update.dto';
-import { IUsersService } from './service/users.service.interface';
-import { HttpExeption } from '../exeptionFilters/http.exeption';
-import { IJWTService } from '../JWTService/JWT.service.interface';
-import { ValidateMiddleware } from '../common/middleware/validate.middleware';
-import { IAuthGuardFactory } from '../common/guard/auth.guard.factory.interface';
-import { IRolesService } from '../roles/service/roles.service.interface';
+import { UserUpdateDto } from './dto/users.update.dto';
+import { HttpException } from '../exceptionFilters/http.exception';
+import { IJwtService } from '../jwtService/jwt.service.interface';
+import { IAuthGuardFactory } from '../common/interfaces/auth.guard.factory.interface';
+import { IRolesService } from '../roles/interfaces/roles.service.interface';
+import { Controller } from '../common/abstract.controller';
+import { ValidateMiddleware } from '../common/validate.middleware';
+import { IUsersService } from './interfaces/users.service.interface';
 
 @injectable()
 export class UsersController extends Controller implements IController {
     constructor(
         @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.UsersService) private usersService: IUsersService,
-        @inject(TYPES.JWTService) private jwtService: IJWTService,
-        @inject(TYPES.AuthGuardFactory) private authGuardFactory: IAuthGuardFactory,
-        @inject(TYPES.RolesService) private rolesService: IRolesService,
+        @inject(TYPES.Users_Service) private usersService: IUsersService,
+        @inject(TYPES.Jwt_Service) private jwtService: IJwtService,
+        @inject(TYPES.Auth_Guard_Factory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.Roles_Service) private rolesService: IRolesService,
     ) {
         super();
         this.bindRouts([
@@ -58,7 +58,7 @@ export class UsersController extends Controller implements IController {
                 ],
             },
         ]);
-        this.logger.success('[UsersController] Успешно подвязанны обработчики роутов');
+        this.logger.success('[UsersController] Успешно подвязаны обработчики роутов');
     }
 
     async register(
@@ -70,7 +70,7 @@ export class UsersController extends Controller implements IController {
 
         if (!result) {
             return next(
-                new HttpExeption(
+                new HttpException(
                     'Пользователь уже зарегистрирован',
                     422,
                     '[UsersController.register]',
@@ -116,7 +116,7 @@ export class UsersController extends Controller implements IController {
 
         if (!updatedUser) {
             return next(
-                new HttpExeption('Ошибка при обновлении данных', 404, 'Не верно переданы данные'),
+                new HttpException('Ошибка при обновлении данных', 404, 'Не верно переданы данные'),
             );
         }
 
