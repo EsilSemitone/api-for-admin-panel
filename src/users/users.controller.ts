@@ -63,7 +63,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async register(
-        { body }: Request<{}, {}, UserRegisterDto, {}, {}, RequestFields.NONE>,
+        { body }: Request<{}, {}, UserRegisterDto, {}, {}, RequestFields.NOT_EXIST>,
         res: Response,
         next: NextFunction,
     ): Promise<Response | void> {
@@ -83,7 +83,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async login(
-        { body }: Request<{}, {}, UserLoginDto, {}, {}, RequestFields.NONE>,
+        { body }: Request<{}, {}, UserLoginDto, {}, {}, RequestFields.NOT_EXIST>,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
@@ -99,7 +99,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async delete(
-        { id }: Request<{}, {}, UserDeleteDto, {}, {}, RequestFields.ID>,
+        { id }: Request<{}, {}, UserDeleteDto, {}, {}, RequestFields.EXIST>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
@@ -109,7 +109,7 @@ export class UsersController extends Controller implements IController {
     }
 
     async update(
-        { body, id }: Request<{}, {}, UserUpdateDto, {}, {}, RequestFields.ID>,
+        { body, id }: Request<{}, {}, UserUpdateDto, {}, {}, RequestFields.EXIST>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {

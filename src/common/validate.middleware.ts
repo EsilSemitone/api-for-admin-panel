@@ -3,11 +3,16 @@ import { ValidationError, validate } from 'class-validator';
 import { Request, Response, NextFunction } from 'express';
 import { HttpException } from '../exceptionFilters/http.exception';
 import { IMiddleware } from './interfaces/middleware.interface';
+import { RequestFields } from '../types/extendedTypes';
 
 export class ValidateMiddleware implements IMiddleware {
     constructor(private classToValidate: ClassConstructor<object>) {}
 
-    execute({ body }: Request, res: Response, next: NextFunction): void {
+    execute(
+        { body }: Request<{}, {}, any, {}, {}, RequestFields.NOT_EXIST>,
+        res: Response,
+        next: NextFunction,
+    ): void {
         const instance = plainToClass(this.classToValidate, body);
 
         validate(instance).then(errors => {

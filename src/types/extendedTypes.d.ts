@@ -1,15 +1,14 @@
 import { Roles } from '@prisma/client';
 
 export enum RequestFields {
-    ID,
-    ROLE,
-    NONE,
+    EXIST,
+    NOT_EXIST,
 }
 
 declare module 'express' {
     export interface Request<T extends RequestFields> {
-        id: T extends RequestFields.ID ? number : never;
-        role: T extends RequestFields.ROLE ? Roles[] : never;
+        id: T extends RequestFields.EXIST ? number : never;
+        role: T extends RequestFields.EXIST ? Roles[] : never;
     }
 
     export interface RolesChangeQueryParams {
