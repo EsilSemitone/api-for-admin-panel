@@ -57,7 +57,7 @@ describe('users e2e', () => {
         expect(res.statusCode).toBe(200);
     });
 
-    it('login succes', async () => {
+    it('login success', async () => {
         const res = await request(application.app).post('/users/login').send(userRegisterDtoExist);
         expect(res.status).toBe(200);
     });

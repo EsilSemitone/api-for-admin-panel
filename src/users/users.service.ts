@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import { IUsersService } from './interfaces/users.service.interface';
-import { User as UserModel } from '@prisma/client';
 import { IConfigService } from '../config/config.service.interface';
 import { TYPES } from '../injectsTypes';
 import { IRolesOnUsersRepository } from '../roles/interfaces/roles.repository.interface';
@@ -20,11 +19,11 @@ export class UsersService implements IUsersService {
         private rolesOnUsersRepository: IRolesOnUsersRepository,
     ) {}
 
-    async getUser(email: string): Promise<UserModel | null> {
+    async getUser(email: string): Promise<User | null> {
         return this.usersRepository.find(email);
     }
 
-    async getUserById(id: number): Promise<UserModel | null> {
+    async getUserById(id: number): Promise<User | null> {
         return this.usersRepository.findById(id);
     }
 
@@ -42,21 +41,19 @@ export class UsersService implements IUsersService {
         const createdUser = await this.usersRepository.create(user);
         const { id } = createdUser;
 
-        this.rolesOnUsersRepository.createRoleOnUser(id, 'USER');
+        await this.rolesOnUsersRepository.createRoleOnUser(id, 'USER');
 
         return true;
     }
 
-    async validateUser({ email, password }: UserLoginDto): Promise<null | UserModel> {
+    async validateUser({ email, password }: UserLoginDto): Promise<null | User> {
         const existUserInDB = await this.usersRepository.find(email);
 
         if (!existUserInDB) {
             return null;
         }
 
-        const user = new User(existUserInDB.name, existUserInDB.email, existUserInDB.password);
-
-        const isValidatePassword = await user.validatePassword(password);
+        const isValidatePassword = await existUserInDB.validatePassword(password);
 
         if (!isValidatePassword) {
             return null;
@@ -65,10 +62,7 @@ export class UsersService implements IUsersService {
         return existUserInDB;
     }
 
-    async updateUser(
-        { paramName, data }: UserUpdateDto,
-        userId: number,
-    ): Promise<UserModel | null> {
+    async updateUser({ paramName, data }: UserUpdateDto, userId: number): Promise<User | null> {
         const validParam = data[paramName];
 
         if (!validParam) {
@@ -87,7 +81,7 @@ export class UsersService implements IUsersService {
         return updatedUser;
     }
 
-    async deleteUser(id: number): Promise<UserModel> {
+    async deleteUser(id: number): Promise<User> {
         return this.usersRepository.delete(id);
     }
 }

@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { Container } from 'inversify';
 import { IUsersService } from './interfaces/users.service.interface';
 import { UsersService } from './users.service';
-import { User as UserModel } from '@prisma/client';
 import { User } from './user.entity';
 import { IConfigService } from '../config/config.service.interface';
 import { TYPES } from '../injectsTypes';
@@ -43,14 +42,11 @@ const someUserRegister: UserRegisterDto = {
     password: 'SomePassword',
 };
 
-const foundUser: UserModel = {
-    id: 1,
-    name: 'User',
-    email: 'SomeUser@mail.ru',
-    password: '$2a$10$1Whgbh4K3a5dsKryp334YOb1eARjX8z.ylsWBr67erE/w9ZXf462a',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-};
+const foundUser: User = new User(
+    'User',
+    'SomeUser@mail.ru',
+    '$2a$10$1Whgbh4K3a5dsKryp334YOb1eARjX8z.ylsWBr67erE/w9ZXf462a',
+);
 
 const validUserLogin: UserLoginDto = {
     email: 'SomeUser@mail.ru',
@@ -94,18 +90,11 @@ beforeAll(() => {
 
 describe('user service', () => {
     it('Create user', async () => {
-        let createdUser: UserModel;
+        let createdUser: User;
         configService.get = jest.fn().mockReturnValue(10);
 
         usersRepository.create = jest.fn().mockImplementation((user: User) => {
-            createdUser = {
-                id: 1,
-                name: user.name,
-                email: user.email,
-                password: user._password,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
+            createdUser = new User(user.name, user.email, user._password);
             return createdUser;
         });
 
@@ -132,7 +121,7 @@ describe('user service', () => {
         usersRepository.findById = jest.fn().mockReturnValueOnce(foundUser);
         usersRepository.update = jest
             .fn()
-            .mockImplementation(async (id: number, user: UserModel) => true);
+            .mockImplementation(async (id: number, user: User) => true);
 
         const result = await usersService.updateUser(validUserUpdateDto, 1);
         expect(result).not.toBe(null);
@@ -140,9 +129,7 @@ describe('user service', () => {
 
     it('invalid update user', async () => {
         usersRepository.findById = jest.fn().mockRejectedValueOnce(foundUser);
-        usersRepository.update = jest
-            .fn()
-            .mockImplementation((id: number, user: UserModel) => true);
+        usersRepository.update = jest.fn().mockImplementation((id: number, user: User) => true);
 
         const result = await usersService.updateUser(invalidUserUpdateDto, 1);
         expect(result).toBe(null);

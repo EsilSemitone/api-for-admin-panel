@@ -137,7 +137,7 @@ export class UsersController extends Controller implements IController {
 
         if (!updatedUser) {
             return next(
-                new HttpException('Ошибка при обновлении данных', 404, 'Не верно переданы данные'),
+                new HttpException('Ошибка при обновлении данных', 404, JSON.stringify(req.body)),
             );
         }
 
