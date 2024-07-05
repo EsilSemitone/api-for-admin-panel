@@ -3,7 +3,8 @@ import { IRolesService } from './interfaces/roles.service.interface';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../injectsTypes';
 import { IRolesOnUsersRepository } from './interfaces/roles.repository.interface';
-import { Roles, RolesOnUsers, Prisma } from '@prisma/client';
+import { Roles } from '@prisma/client';
+import { Role } from './interfaces/roles.entity';
 
 @injectable()
 export class RolesService implements IRolesService {
@@ -12,7 +13,7 @@ export class RolesService implements IRolesService {
         private rolesRepository: IRolesOnUsersRepository,
     ) {}
 
-    async set(userId: number, role: Roles): Promise<RolesOnUsers> {
+    async set(userId: number, role: Roles): Promise<Role> {
         return this.rolesRepository.createRoleOnUser(userId, role);
     }
 
@@ -24,7 +25,7 @@ export class RolesService implements IRolesService {
         });
     }
 
-    async has(userId: number, role: Roles): Promise<Boolean> {
+    async has(userId: number, role: Roles): Promise<boolean> {
         const userRoles = await this.get(userId);
         const userHasRole = userRoles.includes(role);
 
@@ -35,11 +36,11 @@ export class RolesService implements IRolesService {
         return true;
     }
 
-    async delete(userId: number, role: Roles): Promise<Prisma.BatchPayload> {
+    async delete(userId: number, role: Roles): Promise<number> {
         return this.rolesRepository.deleteRoleOnUser(userId, role);
     }
 
-    async getAll(): Promise<RolesOnUsers[]> {
+    async getAll(): Promise<Role[]> {
         return this.rolesRepository.getAll();
     }
 }
