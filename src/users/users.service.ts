@@ -9,6 +9,7 @@ import { UserRegisterDto } from './dto/users.register.dto';
 import { UserUpdateDto } from './dto/users.update.dto';
 import { IUsersRepository } from './interfaces/users.repository.interface';
 import { User } from './user.entity';
+import { Roles } from '../roles/roles';
 
 @injectable()
 export class UsersService implements IUsersService {
@@ -41,7 +42,7 @@ export class UsersService implements IUsersService {
         const createdUser = await this.usersRepository.create(user);
         const { id } = createdUser;
 
-        await this.rolesOnUsersRepository.createRoleOnUser(id, 'USER');
+        await this.rolesOnUsersRepository.createRoleOnUser(id, Roles.USER);
 
         return true;
     }

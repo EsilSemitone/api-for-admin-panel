@@ -13,23 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Roles {
-  USER
-  GENERAL_WAREHOUS
-  ADMIN
-  SUPER_ADMIN
-}
-
-enum TypesProducts {
-  ALCOHOL
-  BIJOUTERIE
-  FOR_KIDS
-  OFFICE
-  FURNITURE
-  COSMETICS
-  FOR_PETS
-}
-
 model User {
   id           Int            @id @default(autoincrement())
   name         String
@@ -41,18 +24,18 @@ model User {
 }
 
 model RolesOnUsers {
-  id     Int   @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   userId Int
-  role   Roles
-  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
-  title       String        @unique
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
   description String
   price       Int
-  type        TypesProducts
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

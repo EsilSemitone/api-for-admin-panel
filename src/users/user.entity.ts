@@ -1,9 +1,9 @@
-import { Roles } from '@prisma/client';
 import { hash, compare } from 'bcryptjs';
+import { RolesType } from '../roles/roles';
 
 export class User {
     _password: string;
-    _roles: Roles[] = ['USER'];
+    _roles: RolesType[] = ['USER'];
     _id: number;
 
     constructor(
@@ -45,7 +45,7 @@ export class User {
         this._password = password;
     }
 
-    get role(): Roles[] {
+    get role(): RolesType[] {
         return this._roles;
     }
 
@@ -62,7 +62,7 @@ export class User {
         return isValidPassword;
     }
 
-    setRole(role: Roles[]): void {
+    setRole(role: RolesType[]): void {
         this._roles = role;
     }
 }

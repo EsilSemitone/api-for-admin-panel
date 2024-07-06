@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { IMiddleware } from './interfaces/middleware.interface';
 import { Request, Response, NextFunction } from 'express';
-import { Roles } from '@prisma/client';
 import { HttpException } from '../exceptionFilters/http.exception';
 import { IJwtService } from '../jwtService/jwt.service.interface';
+import { RolesType } from '../roles/roles';
 
 export class AuthGuard implements IMiddleware {
     exception: HttpException = new HttpException(
@@ -13,7 +13,7 @@ export class AuthGuard implements IMiddleware {
     );
 
     constructor(
-        private role: Roles,
+        private role: RolesType[],
         private jwtService: IJwtService,
     ) {}
 
@@ -24,15 +24,20 @@ export class AuthGuard implements IMiddleware {
         }
 
         const { userId, role } = await this.jwtService.verify(authorization);
-        req.id = userId;
-        req.role = role;
+        let userHasAccess = false;
 
-        const userHasAccess = role.includes(this.role);
+        for (const r of this.role) {
+            if (role.includes(r)) {
+                userHasAccess = true;
+                req.id = userId;
+                req.role = role;
+                break;
+            }
+        }
 
         if (!userHasAccess) {
             return next(this.exception);
         }
-
         return next();
     }
 }

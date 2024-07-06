@@ -58,7 +58,7 @@ export class UserRepository implements IUsersRepository {
                 password,
             },
         });
-        return new User(name, email, password, id);
+        return new User(result.name, result.email, result.password, id);
     }
 
     async delete(id: number): Promise<User> {

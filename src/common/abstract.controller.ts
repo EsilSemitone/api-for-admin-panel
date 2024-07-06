@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IRouterMatcher, Response, Router } from 'express';
+import { Response, Router } from 'express';
 import { IController } from './interfaces/controller.interface';
 import { IRout } from './interfaces/routs.interface';
 import { injectable } from 'inversify';

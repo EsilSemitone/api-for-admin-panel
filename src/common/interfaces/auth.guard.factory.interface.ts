@@ -1,6 +1,6 @@
-import { Roles } from '@prisma/client';
+import { RolesType } from '../../roles/roles';
 import { IMiddleware } from './middleware.interface';
 
 export interface IAuthGuardFactory {
-    create(role: Roles): IMiddleware;
+    create(role: RolesType[]): IMiddleware;
 }

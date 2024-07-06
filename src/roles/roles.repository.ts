@@ -1,16 +1,16 @@
 import 'reflect-metadata';
-import { Roles } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { TYPES } from '../injectsTypes';
 import { IRolesOnUsersRepository } from './interfaces/roles.repository.interface';
 import { injectable, inject } from 'inversify';
-import { Role } from './interfaces/roles.entity';
+import { RoleOnUser } from './roleOnUser.entity';
+import { isRoleType, RolesType } from './roles';
 
 @injectable()
 export class RolesOnUsersRepository implements IRolesOnUsersRepository {
     constructor(@inject(TYPES.Prisma_Service) private prismaService: PrismaService) {}
 
-    async createRoleOnUser(userId: number, role: Roles): Promise<Role> {
+    async createRoleOnUser(userId: number, role: RolesType): Promise<RoleOnUser> {
         const { id } = await this.prismaService.dbClient.rolesOnUsers.create({
             data: {
                 userId,
@@ -18,24 +18,29 @@ export class RolesOnUsersRepository implements IRolesOnUsersRepository {
             },
         });
 
-        return new Role(id, userId, role);
+        return new RoleOnUser(id, userId, role);
     }
 
-    async findRoleOnUser(userId: number): Promise<Role[]> {
+    async findRoleOnUser(userId: number): Promise<RoleOnUser[]> {
         const result = await this.prismaService.dbClient.rolesOnUsers.findMany({
             where: {
                 userId,
             },
         });
 
-        const roleArray = result.map(({ id, userId, role }) => {
-            return new Role(id, userId, role);
-        });
-
-        return roleArray;
+        const roleArray = result
+            .map(({ id, userId, role }) => {
+                if (isRoleType(role)) {
+                    return new RoleOnUser(id, userId, role);
+                }
+            })
+            .filter(obj => obj !== undefined);
+        //Странный баг, тип переменной roleArray => RoleOnUser[]
+        //Но когда я запускаю тесты то TypeScript ругается что тип (RoleOnUser | undefined)[]
+        return roleArray as RoleOnUser[];
     }
 
-    async deleteRoleOnUser(userId: number, role: Roles): Promise<number> {
+    async deleteRoleOnUser(userId: number, role: RolesType): Promise<number> {
         const { count } = await this.prismaService.dbClient.rolesOnUsers.deleteMany({
             where: {
                 userId,
@@ -46,13 +51,17 @@ export class RolesOnUsersRepository implements IRolesOnUsersRepository {
         return count;
     }
 
-    async getAll(): Promise<Role[]> {
+    async getAll(): Promise<RoleOnUser[]> {
         const result = await this.prismaService.dbClient.rolesOnUsers.findMany();
 
-        const roleArray = result.map(({ id, userId, role }) => {
-            return new Role(id, userId, role);
-        });
+        const rolesArray = result
+            .map(({ id, userId, role }) => {
+                if (isRoleType(role)) {
+                    return new RoleOnUser(id, userId, role);
+                }
+            })
+            .filter(obj => obj !== undefined);
 
-        return roleArray;
+        return rolesArray as RoleOnUser[];
     }
 }

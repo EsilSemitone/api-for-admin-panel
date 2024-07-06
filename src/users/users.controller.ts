@@ -15,6 +15,7 @@ import { IRolesService } from '../roles/interfaces/roles.service.interface';
 import { Controller } from '../common/abstract.controller';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { IUsersService } from './interfaces/users.service.interface';
+import { Roles } from '../roles/roles';
 
 @injectable()
 export class UsersController extends Controller implements IController {
@@ -45,7 +46,7 @@ export class UsersController extends Controller implements IController {
                 func: this.delete,
                 middlewares: [
                     new ValidateMiddleware(UserDeleteDto),
-                    this.authGuardFactory.create('USER'),
+                    this.authGuardFactory.create([Roles.USER]),
                 ],
             },
             {
@@ -54,7 +55,7 @@ export class UsersController extends Controller implements IController {
                 func: this.update,
                 middlewares: [
                     new ValidateMiddleware(UserUpdateDto),
-                    this.authGuardFactory.create('USER'),
+                    this.authGuardFactory.create([Roles.USER]),
                 ],
             },
         ]);
@@ -70,11 +71,7 @@ export class UsersController extends Controller implements IController {
 
         if (!result) {
             return next(
-                new HttpException(
-                    'Пользователь уже зарегистрирован',
-                    422,
-                    '[UsersController.register]',
-                ),
+                new HttpException('Пользователь уже зарегистрирован', 422, JSON.stringify(body)),
             );
         }
 

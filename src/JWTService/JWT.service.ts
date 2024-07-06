@@ -3,9 +3,9 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../injectsTypes';
 import { IConfigService } from '../config/config.service.interface';
 import { sign, verify as jwtVerify } from 'jsonwebtoken';
-import { Roles } from '@prisma/client';
 import { IJwtService } from './jwt.service.interface';
 import { CustomJWTPayload } from './jwt.types';
+import { RolesType } from '../roles/roles';
 
 @injectable()
 export class JWTService implements IJwtService {
@@ -15,7 +15,7 @@ export class JWTService implements IJwtService {
         this.secret = this.configService.get('SECRET');
     }
 
-    async sign(role: Roles[], userId: number): Promise<string> {
+    async sign(role: RolesType[], userId: number): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             sign(
                 {

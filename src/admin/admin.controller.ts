@@ -12,6 +12,7 @@ import { IUsersService } from '../users/interfaces/users.service.interface';
 import { AppointRoleDto } from './appoint.role.dto';
 import { ValidateMiddleware } from '../common/validate.middleware';
 import { RemoveRoleDto } from './remove.role.dto';
+import { Roles } from '../roles/roles';
 
 @injectable()
 export class AdminController extends Controller implements IController {
@@ -28,7 +29,7 @@ export class AdminController extends Controller implements IController {
                 method: 'post',
                 func: this.appointRole,
                 middlewares: [
-                    this.authGuardFactory.create('ADMIN'),
+                    this.authGuardFactory.create([Roles.ADMIN]),
                     new ValidateMiddleware(AppointRoleDto),
                 ],
             },
@@ -37,7 +38,7 @@ export class AdminController extends Controller implements IController {
                 method: 'delete',
                 func: this.removeRole,
                 middlewares: [
-                    this.authGuardFactory.create('ADMIN'),
+                    this.authGuardFactory.create([Roles.ADMIN]),
                     new ValidateMiddleware(RemoveRoleDto),
                 ],
             },
@@ -58,13 +59,13 @@ export class AdminController extends Controller implements IController {
             );
         }
 
-        const userHasRole = await this.rolesService.has(isUserExist.id, 'GENERAL_WAREHOUS');
+        const userHasRole = await this.rolesService.has(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         if (userHasRole) {
             return this.ok(res, 'Пользователю уже назначена роль');
         }
 
-        await this.rolesService.set(isUserExist.id, 'GENERAL_WAREHOUS');
+        await this.rolesService.set(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         this.ok(res, 'Роль назначена успешно');
     }
@@ -83,13 +84,13 @@ export class AdminController extends Controller implements IController {
             );
         }
 
-        const userHasRole = await this.rolesService.has(isUserExist.id, 'GENERAL_WAREHOUS');
+        const userHasRole = await this.rolesService.has(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         if (!userHasRole) {
             return this.ok(res, 'У пользователя уже отсутствует роль');
         }
 
-        await this.rolesService.delete(isUserExist.id, 'GENERAL_WAREHOUS');
+        await this.rolesService.delete(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         this.ok(res, 'Роль успешно отозвана');
     }

@@ -1,7 +1,7 @@
-import { Roles } from '@prisma/client';
 import { CustomJWTPayload } from './jwt.types';
+import { RolesType } from '../roles/roles';
 
 export interface IJwtService {
-    sign(role: Roles[], userId: number): Promise<string>;
+    sign(role: RolesType[], userId: number): Promise<string>;
     verify(token: string): Promise<CustomJWTPayload>;
 }

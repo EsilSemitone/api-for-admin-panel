@@ -1,10 +1,10 @@
-import { Roles } from '@prisma/client';
+import { RolesType } from './roles';
 
-export class Role {
+export class RoleOnUser {
     constructor(
         private _id: number,
         private _userId: number,
-        private _role: Roles,
+        private _role: RolesType,
     ) {}
 
     get id(): number {
@@ -15,7 +15,7 @@ export class Role {
         return this._userId;
     }
 
-    get role(): Roles {
+    get role(): RolesType {
         return this._role;
     }
 }

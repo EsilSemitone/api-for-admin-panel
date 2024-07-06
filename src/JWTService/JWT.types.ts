@@ -1,7 +1,7 @@
-import { Roles } from '@prisma/client';
 import { JwtPayload } from 'jsonwebtoken';
+import { RolesType } from '../roles/roles';
 
 export interface CustomJWTPayload extends JwtPayload {
-    role: Roles[];
+    role: RolesType[];
     userId: number;
 }
