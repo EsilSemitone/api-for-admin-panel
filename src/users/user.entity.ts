@@ -1,9 +1,9 @@
 import { hash, compare } from 'bcryptjs';
-import { RolesType } from '../roles/roles';
+import { Roles, RolesType } from '../roles/roles';
 
 export class User {
     _password: string;
-    _roles: RolesType[] = ['USER'];
+    _roles: RolesType[] = [Roles.USER];
     _id: number;
 
     constructor(
