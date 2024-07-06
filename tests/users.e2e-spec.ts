@@ -1,5 +1,5 @@
-import { App } from '../app';
-import { box } from '../main';
+import { App } from '../src/app';
+import { box } from '../src/main';
 import request from 'supertest';
 import { LocalPrismaService, endingTest, mainSeed } from './seed';
 

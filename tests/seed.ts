@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { User } from '../users/user.entity';
+import { User } from '../src/users/user.entity';
 import { hashSync } from 'bcryptjs';
 import { DotenvParseOutput, config } from 'dotenv';
-import { RolesType } from '../roles/roles';
+import { RolesType } from '../src/roles/roles';
 
 const SALT = Number(initConfig()['SALT']);
 
