@@ -1,0 +1,15 @@
+export const TYPES = {
+    Logger: Symbol('Logger'),
+    App: Symbol('App'),
+    Users_Controller: Symbol('Users_Controller'),
+    Config_Service: Symbol('Config_Service'),
+    Prisma_Service: Symbol('Prisma_Service'),
+    Users_Service: Symbol('Users_Service'),
+    User_Repository: Symbol('User_Repository'),
+    Jwt_Service: Symbol('Jwt_Service'),
+    Roles_Repository: Symbol('Roles_Repository'),
+    Exceptions_Filters: Symbol('Exceptions_Filters'),
+    Auth_Guard_Factory: Symbol('Auth_Guard_Factory'),
+    Roles_Service: Symbol('Roles_Service'),
+    Admin_Controller: Symbol('Admin_Controller'),
+};
