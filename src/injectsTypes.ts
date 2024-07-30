@@ -12,4 +12,7 @@ export const TYPES = {
     Auth_Guard_Factory: Symbol('Auth_Guard_Factory'),
     Roles_Service: Symbol('Roles_Service'),
     Admin_Controller: Symbol('Admin_Controller'),
+    ProductsService: Symbol('ProductsService'),
+    ProductsRepository: Symbol('ProductsRepository'),
+    ProductsController: Symbol('ProductsController'),
 };

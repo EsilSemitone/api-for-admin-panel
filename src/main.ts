@@ -23,26 +23,23 @@ import { AdminController } from './admin/admin.controller';
 import { AuthGuardFactory } from './common/auth.guard.factory';
 import { IUsersService } from './users/interfaces/users.service.interface';
 import { UsersService } from './users/users.service';
+import { IProductsService } from './products/interfaces/products.service.interface';
+import { ProductsService } from './products/products.service';
+import { IProductsRepository } from './products/interfaces/products.repository.interface';
+import { ProductsRepository } from './products/products.repository';
+import { ProductsController } from './products/products.controller';
 
 type MainReturnType = { app: App; container: Container };
-
-async function main(): Promise<MainReturnType> {
-    const container = buildContainer();
-    const app = container.get<App>(TYPES.App);
-    await app.init();
-    return { app, container };
-}
 
 function buildContainer(): Container {
     const container = new Container();
     const mainModule = new ContainerModule(bind => {
         bind<App>(TYPES.App).to(App).inSingletonScope();
         bind<IController>(TYPES.Users_Controller).to(UsersController);
-        bind<IUsersRepository>(TYPES.User_Repository).to(UserRepository).inSingletonScope();
-        bind<IRolesOnUsersRepository>(TYPES.Roles_Repository).to(RolesOnUsersRepository);
         bind<IExceptionsFilters>(TYPES.Exceptions_Filters).to(ExceptionsFilters);
         bind<IAuthGuardFactory>(TYPES.Auth_Guard_Factory).to(AuthGuardFactory);
         bind<IController>(TYPES.Admin_Controller).to(AdminController);
+        bind<IController>(TYPES.ProductsController).to(ProductsController);
     });
     const servicesModule = new ContainerModule(bind => {
         bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
@@ -51,10 +48,24 @@ function buildContainer(): Container {
         bind<IUsersService>(TYPES.Users_Service).to(UsersService).inSingletonScope();
         bind<IJwtService>(TYPES.Jwt_Service).to(JWTService).inSingletonScope();
         bind<IRolesService>(TYPES.Roles_Service).to(RolesService);
+        bind<IProductsService>(TYPES.ProductsService).to(ProductsService);
+    });
+
+    const repositoryModule = new ContainerModule(bind => {
+        bind<IUsersRepository>(TYPES.User_Repository).to(UserRepository).inSingletonScope();
+        bind<IRolesOnUsersRepository>(TYPES.Roles_Repository).to(RolesOnUsersRepository);
+        bind<IProductsRepository>(TYPES.ProductsRepository).to(ProductsRepository);
     });
     container.load(mainModule);
     container.load(servicesModule);
+    container.load(repositoryModule);
     return container;
 }
 
+async function main(): Promise<MainReturnType> {
+    const container = buildContainer();
+    const app = container.get<App>(TYPES.App);
+    await app.init();
+    return { app, container };
+}
 export const box = main();
