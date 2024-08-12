@@ -8,7 +8,8 @@
         "start": "node dist/main.js",
         "dev": "nodemon",
         "test": "jest",
-        "test:e2e": "jest ---config jest.e2e.config.ts --runInBand"
+        "test:e2e": "jest ---config jest.e2e.config.ts --runInBand",
+        "swagger": "ts-node --files src/swagger/swagger.ts"
     },
     "repository": {
         "type": "git",
@@ -33,6 +34,7 @@
         "@types/passport-jwt": "^4.0.1",
         "@types/signale": "^1.4.7",
         "@types/supertest": "^6.0.2",
+        "@types/swagger-ui-express": "^4.1.6",
         "@typescript-eslint/eslint-plugin": "^7.9.0",
         "@typescript-eslint/parser": "^7.9.0",
         "eslint": "^8.56.0",
@@ -43,6 +45,7 @@
         "prettier": "^3.2.5",
         "prisma": "^5.13.0",
         "supertest": "^7.0.0",
+        "swagger-autogen": "^2.23.7",
         "ts-jest": "^29.1.4",
         "ts-node": "^10.9.2",
         "typescript": "^5.4.5",
@@ -59,6 +62,7 @@
         "inversify": "^6.0.2",
         "jsonwebtoken": "^9.0.2",
         "reflect-metadata": "^0.2.2",
-        "signale": "^1.4.0"
+        "signale": "^1.4.0",
+        "swagger-ui-express": "^5.0.1"
     }
 }

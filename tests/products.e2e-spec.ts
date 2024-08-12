@@ -71,7 +71,7 @@ async function getResponses(
 }
 
 describe('products e2e', () => {
-    it('Get all products [Admin]', async () => {
+    it('Get all products [Admin, General warehouse]', async () => {
         const [adminResponse, generalWarehouseResponse, userResponse] = await getResponses(
             '/products',
             'get',

@@ -1,14 +1,8 @@
+import 'reflect-metadata';
 import { Type } from 'class-transformer';
-import {
-    IsEmail,
-    IsIn,
-    IsString,
-    Length,
-    ValidateIf,
-    ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsIn, IsString, Length, ValidateIf, ValidateNested } from 'class-validator';
 
-const params = {
+export const params = {
     name: 'name',
     email: 'email',
     password: 'password',

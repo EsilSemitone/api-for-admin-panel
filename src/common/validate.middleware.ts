@@ -13,7 +13,6 @@ export class ValidateMiddleware implements IMiddleware {
         validate(instance).then(errors => {
             if (errors.length > 0) {
                 const errorsResult = extractErrors(errors);
-
                 next(new HttpException('На сервер не верно переданы данные', 422, errorsResult));
             } else {
                 next();

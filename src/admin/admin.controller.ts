@@ -46,52 +46,156 @@ export class AdminController extends Controller implements IController {
     }
 
     async appointRole(
-        { body }: Request,
+        { body }: Request<{}, {}, AppointRoleDto>,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
+        // #swagger.start
+        /*
+        #swagger.path = '/admin/appoint'
+        #swagger.method = 'post'
+        #swagger.description = 'appoint role GENERAL_WAREHOUSE from user.'
+        #swagger.tags = ['Admin']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+ 
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/appointRole"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success appoint role",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successAppointRole",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "User is not exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/roleAppointUserIsNotExist",
+                    }
+                }           
+            }
+        }
+        #swagger.end
+        */
         const { email } = body;
         const isUserExist = await this.userService.getUser(email);
 
         if (!isUserExist) {
             return next(
-                new HttpException('Ошибка при назначении роли', 401, 'Пользователя не существует'),
+                new HttpException('Ошибка при назначении роли', 404, 'Пользователя не существует'),
             );
         }
 
         const userHasRole = await this.rolesService.has(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         if (userHasRole) {
-            return this.ok(res, 'Пользователю уже назначена роль');
+            return this.ok(res, { message: 'Пользователю уже назначена роль' });
         }
 
         await this.rolesService.set(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
-        this.ok(res, 'Роль назначена успешно');
+        this.ok(res, { message: 'Роль назначена успешно' });
     }
 
     async removeRole(
-        { body }: Request,
+        { body }: Request<{}, {}, RemoveRoleDto>,
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
+        // #swagger.start
+        /*
+        #swagger.path = '/admin/remove'
+        #swagger.method = 'delete'
+        #swagger.description = 'delete role GENERAL_WAREHOUSE from user.'
+        #swagger.tags = ['Admin']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+ 
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/removeRole"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success remove role",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successRemoveRole",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "User is not exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/roleRemoveUserIsNotExist",
+                    }
+                }           
+            }
+        }
+        #swagger.end
+        */
         const { email } = body;
         const isUserExist = await this.userService.getUser(email);
 
         if (!isUserExist) {
             return next(
-                new HttpException('Ошибка при удалении роли', 401, 'Пользователя не существует'),
+                new HttpException('Ошибка при удалении роли', 404, 'Пользователя не существует'),
             );
         }
 
         const userHasRole = await this.rolesService.has(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
         if (!userHasRole) {
-            return this.ok(res, 'У пользователя уже отсутствует роль');
+            return this.ok(res, { message: 'У пользователя уже отсутствует роль' });
         }
 
         await this.rolesService.delete(isUserExist.id, Roles.GENERAL_WAREHOUSE);
 
-        this.ok(res, 'Роль успешно отозвана');
+        this.ok(res, { message: 'Роль успешно отозвана' });
     }
 }

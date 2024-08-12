@@ -27,7 +27,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'get',
                 func: this.getProducts,
                 middlewares: [
-                    authGuardFactory.create(['ADMIN']),
+                    // authGuardFactory.create(['ADMIN']),
                     new ValidateQueryFilterMiddleware(),
                 ],
             },
@@ -35,14 +35,14 @@ export class ProductsController extends Controller implements IController {
                 path: '/stock',
                 method: 'get',
                 func: this.getProductsOfStock,
-                middlewares: [authGuardFactory.create(['GENERAL_WAREHOUSE'])],
+                // middlewares: [authGuardFactory.create(['GENERAL_WAREHOUSE'])],
             },
             {
                 path: '/create',
                 method: 'post',
                 func: this.create,
                 middlewares: [
-                    authGuardFactory.create(['ADMIN']),
+                    // authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductsCreateDto),
                 ],
             },
@@ -51,7 +51,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'post',
                 func: this.addProductsOfStock,
                 middlewares: [
-                    authGuardFactory.create(['GENERAL_WAREHOUSE']),
+                    // authGuardFactory.create(['GENERAL_WAREHOUSE']),
                     new ValidateMiddleware(ProductAddByStockDto),
                 ],
             },
@@ -60,7 +60,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'delete',
                 func: this.delete,
                 middlewares: [
-                    authGuardFactory.create(['ADMIN']),
+                    // authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductDeleteDto),
                 ],
             },
@@ -69,7 +69,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'patch',
                 func: this.update,
                 middlewares: [
-                    authGuardFactory.create(['ADMIN']),
+                    // authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductUpdateDto),
                 ],
             },
@@ -81,12 +81,74 @@ export class ProductsController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/'
+        #swagger.method = 'get'
+        #swagger.description = 'Get all products.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+        #swagger.responses[200] = {
+            description: "Get all products",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/products",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.end
+        */
         const products = await this.productService.getAll(productsFilter);
 
-        this.ok(res, JSON.stringify(products));
+        this.ok(res, products);
     }
 
     async getProductsOfStock(req: Request, res: Response, next: NextFunction): Promise<void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/stock'
+        #swagger.method = 'get'
+        #swagger.description = 'Get all products by stock.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+        #swagger.responses[200] = {
+            description: "Get all products by stock",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productAndStock",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.end
+        */
         const result = await this.productService.getAllByStock();
         this.ok(res, result);
     }
@@ -96,6 +158,57 @@ export class ProductsController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/add'
+        #swagger.method = 'post'
+        #swagger.description = 'Add some amount products of stock.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]       
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/addProduct"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success added, we get this product info by stock",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productsOfStock",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "Failed search product by id",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productIdIsNotExist",            
+                    },
+                }           
+            }
+        }  
+        #swagger.end
+        */
         const result = await this.productService.addByStock(body);
 
         if (!result) {
@@ -110,16 +223,61 @@ export class ProductsController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/create'
+        #swagger.method = 'post'
+        #swagger.description = 'Create a new product.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]       
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/productCreate"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success create a new product",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/product",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[400] = {
+            description: "Product with this name already exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productIdIsNotExist",            
+                    },
+                }           
+            }
+        }  
+        #swagger.end
+        */
         const result = await this.productService.create(body);
 
         if (!result) {
-            return next(
-                new HttpException(
-                    'Продукт с таким именем уже существует',
-                    400,
-                    JSON.stringify(body),
-                ),
-            );
+            return next(new HttpException('Продукт с таким именем уже существует', 400, body));
         }
 
         this.ok(res, result);
@@ -129,6 +287,57 @@ export class ProductsController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/delete'
+        #swagger.method = 'delete'
+        #swagger.description = 'Delete product by title.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]       
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/productDelete"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success delete product",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successDelete",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "Product with this name is not exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productNameIsNotExist",            
+                    },
+                }           
+            }
+        }  
+        #swagger.end
+        */
         const result = await this.productService.delete(body);
 
         if (!result) {
@@ -142,6 +351,67 @@ export class ProductsController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
+        // #swagger.start
+        /*
+        #swagger.path = '/product/update'
+        #swagger.method = 'patch'
+        #swagger.description = 'Update product property, for example - title.'
+        #swagger.tags = ['Product']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]       
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/productUpdate"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success update product property",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/product",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[400] = {
+            description: "Expected least one property for update",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/expectedProperty",            
+                    },
+                }           
+            }
+        }  
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "Product with this id is not exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/productIdIsNotExist_update",            
+                    },
+                }           
+            }
+        }  
+        #swagger.end
+        */
         if (Object.keys(body).length < 2) {
             return next(
                 new HttpException(

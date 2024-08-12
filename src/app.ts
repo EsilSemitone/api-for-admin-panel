@@ -7,6 +7,7 @@ import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
 import { IExceptionsFilters } from './exceptionFilters/exceptions.filters.interface';
 import { IController } from './common/interfaces/controller.interface';
+import { swaggerMiddlewares } from './swagger/swagger.middleware';
 
 @injectable()
 export class App {
@@ -37,6 +38,7 @@ export class App {
         this.app.use('/users', this.usersController.router);
         this.app.use('/admin', this.adminController.router);
         this.app.use('/products', this.productsController.router);
+        this.app.use('/api-doc', swaggerMiddlewares());
     }
 
     public async init(): Promise<void> {
