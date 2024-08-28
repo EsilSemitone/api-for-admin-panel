@@ -8,7 +8,7 @@ import { HttpException } from './http.exception';
 
 @injectable()
 export class ExceptionsFilters implements IExceptionsFilters {
-    constructor(@inject(TYPES.Logger) private logger: ILogger) {}
+    constructor(@inject(TYPES.logger) private logger: ILogger) {}
 
     execute(err: Error | HttpException, req: Request, res: Response, next: NextFunction): void {
         if (err instanceof HttpException) {

@@ -1,35 +1,32 @@
 import 'reflect-metadata';
-import { IProductsService } from './interfaces/products.service.interface';
+import {
+    IProductsService,
+    ProductServiceInputParamsAddByStock,
+    ProductServiceInputParamsCreate,
+    ProductServiceInputParamsDelete,
+    ProductServiceInputParamsGetAll,
+    ProductServiceInputParamsUpdate,
+} from './interfaces/products.service.interface';
 import { Product } from './entity/product.entity';
 import { inject, injectable } from 'inversify';
-import { ProductsFilterQueryParams } from './dto/products.query.dto';
 import { TYPES } from '../injectsTypes';
 import { IProductsRepository } from './interfaces/products.repository.interface';
-import { ProductsCreateDto } from './dto/products.create.dto';
-import { ProductAddByStockDto } from './dto/product.addByStock.dto';
 import { ProductOfStock } from './entity/product_Of_Stock.entity';
 import { ProductAndStock } from './entity/product_And_Stock.entity';
-import { ProductDeleteDto } from './dto/product.delete.dto';
-import { ProductUpdateDto } from './dto/product.update.dto';
 
 @injectable()
 export class ProductsService implements IProductsService {
     constructor(
-        @inject(TYPES.ProductsRepository) private productsRepository: IProductsRepository,
+        @inject(TYPES.productsRepository) private productsRepository: IProductsRepository,
     ) {}
 
-    async getAll(query?: ProductsFilterQueryParams): Promise<Product[]> {
-        if (query === undefined) {
+    async getAll({ type, price, sortByDate }: ProductServiceInputParamsGetAll): Promise<Product[]> {
+        if (!(type || price || sortByDate)) {
             const result = await this.productsRepository.getAll();
             return result;
         }
 
-        if (Object.keys(query).length === 0) {
-            const result = await this.productsRepository.getAll();
-            return result;
-        }
-
-        const result = await this.productsRepository.getAllByFilter(query);
+        const result = await this.productsRepository.getAllByFilter({ type, price, sortByDate });
         return result;
     }
 
@@ -38,67 +35,74 @@ export class ProductsService implements IProductsService {
         return stock;
     }
 
-    async addByStock(productAddDto: ProductAddByStockDto): Promise<ProductOfStock | null> {
-        const isProductExist = await this.productsRepository.findById(productAddDto.productId);
+    async addByStock({
+        productId,
+        amount,
+    }: ProductServiceInputParamsAddByStock): Promise<ProductOfStock | null> {
+        const isProductExist = await this.productsRepository.findById(productId);
 
         if (!isProductExist) {
             return null;
         }
 
-        const productAtStock = await this.productsRepository.findAtStock(productAddDto.productId);
+        const productAtStock = await this.productsRepository.findAtStock(productId);
 
         if (!productAtStock) {
-            const result = await this.productsRepository.createByStock(
-                productAddDto.productId,
-                productAddDto.amount,
-            );
+            const result = await this.productsRepository.createByStock(productId, amount);
 
             return result;
         }
 
         const result = await this.productsRepository.addByStock(
-            productAddDto.productId,
-            productAtStock.amount + productAddDto.amount,
+            productId,
+            productAtStock.amount + amount,
         );
 
         return result;
     }
 
-    async create(product: ProductsCreateDto): Promise<Product | null> {
-        const isProductExist = await this.productsRepository.findByTitle(product.title);
+    async create({
+        title,
+        description,
+        price,
+        type,
+    }: ProductServiceInputParamsCreate): Promise<Product | null> {
+        const isProductExist = await this.productsRepository.findByTitle(title);
 
         if (isProductExist) {
             return null;
         }
 
-        const newProduct = await this.productsRepository.create(product);
+        const newProduct = await this.productsRepository.create({
+            title,
+            description,
+            price,
+            type,
+        });
 
         return newProduct;
     }
 
-    async delete({ title }: ProductDeleteDto): Promise<boolean> {
+    async delete({ title }: ProductServiceInputParamsDelete): Promise<Product | null> {
         const isProductExist = await this.productsRepository.findByTitle(title);
-
-        if (!isProductExist) {
-            return false;
-        }
-
-        const isProductDeleted = await this.productsRepository.delete(title);
-
-        return isProductDeleted;
-    }
-
-    async update(dto: ProductUpdateDto): Promise<Product | null> {
-        const isProductExist = await this.productsRepository.findById(dto.id);
 
         if (!isProductExist) {
             return null;
         }
 
-        const data: Partial<ProductUpdateDto> = Object.assign({}, dto);
-        delete data.id;
+        const deletedProduct = await this.productsRepository.softDelete(title);
 
-        const updatedProduct = await this.productsRepository.update(dto.id, data);
+        return deletedProduct;
+    }
+
+    async update({ id, updatedData }: ProductServiceInputParamsUpdate): Promise<Product | null> {
+        const isProductExist = await this.productsRepository.findById(id);
+
+        if (!isProductExist) {
+            return null;
+        }
+
+        const updatedProduct = await this.productsRepository.update(id, updatedData);
 
         return updatedProduct;
     }

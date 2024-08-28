@@ -1,3 +1,4 @@
+//Имя файла ни о чем не говорит
 export const _ADMIN = {
     name: 'ADMIN',
     email: 'ADMIN@mail.ru',

@@ -6,31 +6,22 @@ import { TYPES } from '../injectsTypes';
 import { PrismaService } from '../database/prisma.service';
 import { ProductsFilterQueryParams } from './dto/products.query.dto';
 import { ProductsCreateDto } from './dto/products.create.dto';
-import { Prisma, Product as PrismaProduct } from '@prisma/client';
-import { ProductsType } from './products.types';
 import { ProductAndStock } from './entity/product_And_Stock.entity';
 import { ProductOfStock } from './entity/product_Of_Stock.entity';
-import { ProductUpdateDto } from './dto/product.update.dto';
+import { UpdatedData } from './dto/product.update.dto';
+import { ProductServiceInputParamsGetAll } from './interfaces/products.service.interface';
 
 @injectable()
 export class ProductsRepository implements IProductsRepository {
-    constructor(@inject(TYPES.Prisma_Service) private prismaService: PrismaService) {}
+    constructor(@inject(TYPES.prismaService) private prismaService: PrismaService) {}
 
     async findByTitle(title: string): Promise<Product | null> {
         const result = await this.prismaService.dbClient.product.findFirst({ where: { title } });
         if (!result) {
             return result;
         }
-        const { id, description, price, type, createdAt, updatedAt } = result;
-        return new Product(
-            id,
-            title,
-            description,
-            price,
-            type as ProductsType,
-            createdAt,
-            updatedAt,
-        );
+
+        return new Product(result);
     }
 
     async findById(id: number): Promise<Product | null> {
@@ -40,17 +31,7 @@ export class ProductsRepository implements IProductsRepository {
             return product;
         }
 
-        const { title, description, price, type, createdAt, updatedAt } = product;
-
-        return new Product(
-            id,
-            title,
-            description,
-            price,
-            type as ProductsType,
-            createdAt,
-            updatedAt,
-        );
+        return new Product(product);
     }
 
     async findAtStock(productId: number): Promise<ProductOfStock | null> {
@@ -60,101 +41,35 @@ export class ProductsRepository implements IProductsRepository {
             return result;
         }
 
-        const { amount, createdAt, updatedAt } = result;
-
-        return new ProductOfStock(productId, amount, createdAt, updatedAt);
+        return new ProductOfStock(result);
     }
 
     async getAll(): Promise<Product[]> {
-        const products = await this.prismaService.dbClient.product.findMany();
+        const products = await this.prismaService.dbClient.product.findMany({
+            where: { isDeleted: false },
+        });
 
-        return products.map(
-            ({ id, title, description, price, type, createdAt, updatedAt }) =>
-                new Product(
-                    id,
-                    title,
-                    description,
-                    price,
-                    type as ProductsType,
-                    createdAt,
-                    updatedAt,
-                ),
-        );
+        return products.map(product => new Product(product));
     }
 
-    constructMainQuery({ type, price, date }: ProductsFilterQueryParams): Prisma.Sql {
-        let firstQuery;
-        let priceQuery;
-        let priceQueryTo;
-        let dateQuery;
+    async getAllByFilter({
+        type,
+        price,
+        sortByDate,
+    }: Pick<ProductServiceInputParamsGetAll, 'type' | 'price' | 'sortByDate'>): Promise<Product[]> {
+        const parseOrderBy = ProductsFilterQueryParams.parseSortByDate(sortByDate);
+        const parsePrice = ProductsFilterQueryParams.parsePrice(price);
 
-        let typeValue;
-        let priceValueFrom;
-        let priceValueTo;
-        let dateValue;
-
-        if (type) {
-            firstQuery = `SELECT id, title, description, price, type, "createdAt", "updatedAt" FROM "Product" WHERE type = `;
-            typeValue = type;
-        }
-
-        if (price) {
-            if (price.from) {
-                typeof price.from === 'string'
-                    ? (priceValueFrom = Number.parseInt(price.from))
-                    : undefined;
-
-                firstQuery
-                    ? (priceQuery = `AND price >= `)
-                    : (firstQuery =
-                          'SELECT id, title, description, price, type, "createdAt", "updatedAt" FROM "Product" WHERE  price >= ');
-                undefined;
-            }
-
-            if (price.to) {
-                typeof price.to === 'string'
-                    ? (priceValueFrom = Number.parseInt(price.to))
-                    : undefined;
-                priceValueTo = price.to;
-                firstQuery
-                    ? (priceQueryTo = 'AND price <= ')
-                    : (firstQuery =
-                          'SELECT id, title, description, price, type, "createdAt", "updatedAt" FROM "Product" WHERE  price <= ');
-                undefined;
-            }
-        }
-
-        if (date) {
-            dateValue = date;
-            dateQuery = `ORDER BY `;
-        }
-
-        const queryArray = [firstQuery, priceQuery, priceQueryTo, dateQuery].filter(
-            query => query !== undefined,
-        );
-
-        const queryValues = [typeValue, priceValueFrom, priceValueTo, dateValue].filter(
-            query => query !== undefined,
-        );
-        //при компиляции typescript считает что queryArray имеет тип ( string | undefined)[] хотя массив был отсортирован
-        return Prisma.sql([...queryArray, ''] as string[], ...queryValues);
-    }
-
-    async getAllByFilter(filter: ProductsFilterQueryParams): Promise<Product[]> {
-        const mainQuery = this.constructMainQuery(filter);
-
-        const result = await this.prismaService.dbClient.$queryRaw<PrismaProduct[]>(mainQuery);
-
-        return result.map(({ id, title, description, price, type, createdAt, updatedAt }) => {
-            return new Product(
-                id,
-                title,
-                description,
-                price,
-                type as ProductsType,
-                createdAt,
-                updatedAt,
-            );
+        const result = await this.prismaService.dbClient.product.findMany({
+            where: {
+                isDeleted: false,
+                type,
+                price: parsePrice,
+            },
+            orderBy: parseOrderBy,
+        });
+        return result.map(product => {
+            return new Product(product);
         });
     }
 
@@ -162,6 +77,7 @@ export class ProductsRepository implements IProductsRepository {
         const result = await this.prismaService.dbClient.stock.findMany({
             select: {
                 product: true,
+                id: true,
                 amount: true,
                 productId: true,
                 createdAt: true,
@@ -169,85 +85,74 @@ export class ProductsRepository implements IProductsRepository {
             },
         });
 
-        const products = result.map(({ product, productId, amount, createdAt, updatedAt }) => {
+        const products = result.map(({ product, id, productId, amount, createdAt, updatedAt }) => {
             return new ProductAndStock(
-                new Product(
-                    product.id,
-                    product.title,
-                    product.description,
-                    product.price,
-                    product.type as ProductsType,
-                    product.createdAt,
-                    product.updatedAt,
-                ),
-                new ProductOfStock(productId, amount, createdAt, updatedAt),
+                new Product(product),
+                new ProductOfStock({ id, productId, amount, createdAt, updatedAt }),
             );
         });
 
         return products;
     }
 
-    async create(product: ProductsCreateDto): Promise<Product> {
-        const { id, title, description, price, type, createdAt, updatedAt } =
-            await this.prismaService.dbClient.product.create({
-                data: {
-                    title: product.title,
-                    description: product.description,
-                    type: product.type,
-                    price: product.price,
-                },
-            });
+    async create({ title, description, price, type }: ProductsCreateDto): Promise<Product> {
+        const newProduct = await this.prismaService.dbClient.product.create({
+            data: {
+                title,
+                description,
+                type,
+                price,
+            },
+        });
 
-        return new Product(
-            id,
-            title,
-            description,
-            price,
-            type as ProductsType,
-            createdAt,
-            updatedAt,
-        );
+        return new Product(newProduct);
     }
 
     async addByStock(productId: number, amount: number): Promise<ProductOfStock> {
-        const { createdAt, updatedAt } = await this.prismaService.dbClient.stock.update({
+        const result = await this.prismaService.dbClient.stock.update({
             where: { productId },
             data: {
                 amount,
             },
         });
 
-        return new ProductOfStock(productId, amount, createdAt, updatedAt);
+        return new ProductOfStock(result);
     }
 
     async createByStock(productId: number, amount: number): Promise<ProductOfStock> {
-        const { createdAt, updatedAt } = await this.prismaService.dbClient.stock.create({
+        const result = await this.prismaService.dbClient.stock.create({
             data: {
                 productId,
                 amount,
             },
         });
 
-        return new ProductOfStock(productId, amount, createdAt, updatedAt);
+        return new ProductOfStock(result);
     }
 
-    async delete(title: string): Promise<boolean> {
+    async softDelete(title: string): Promise<Product> {
+        const deletedProduct = await this.prismaService.dbClient.product.update({
+            where: { title },
+            data: {
+                isDeleted: true,
+            },
+        });
+
+        return new Product(deletedProduct);
+    }
+
+    async delete(title: string): Promise<Product> {
+        //Я решил что правильно будет оставить возможность удаление записей из базы данных
         const result = await this.prismaService.dbClient.product.delete({ where: { title } });
-        return true;
+        return new Product(result);
     }
 
-    async update(id: number, data: Omit<ProductUpdateDto, 'id'>): Promise<Product> {
-        const { title, description, price, type, createdAt, updatedAt } =
-            await this.prismaService.dbClient.product.update({ where: { id }, data });
+    async update(id: number, data: UpdatedData): Promise<Product> {
+        const updatedProduct = await this.prismaService.dbClient.product.update({
+            where: { id },
+            data,
+        });
 
-        return new Product(
-            id,
-            title,
-            description,
-            price,
-            type as ProductsType,
-            createdAt,
-            updatedAt,
-        );
+        return new Product(updatedProduct);
     }
 }

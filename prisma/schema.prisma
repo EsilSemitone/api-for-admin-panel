@@ -38,7 +38,8 @@ model Product {
   type        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Stock       Stock?
+  isDeleted   Boolean  @default(false)
+  stock       Stock?
 }
 
 model Stock {

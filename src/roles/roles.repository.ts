@@ -8,7 +8,7 @@ import { isRoleType, RolesType } from './roles';
 
 @injectable()
 export class RolesOnUsersRepository implements IRolesOnUsersRepository {
-    constructor(@inject(TYPES.Prisma_Service) private prismaService: PrismaService) {}
+    constructor(@inject(TYPES.prismaService) private prismaService: PrismaService) {}
 
     async createRoleOnUser(userId: number, role: RolesType): Promise<RoleOnUser> {
         const { id } = await this.prismaService.dbClient.rolesOnUsers.create({

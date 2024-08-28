@@ -9,7 +9,7 @@ import { RolesType } from './roles';
 @injectable()
 export class RolesService implements IRolesService {
     constructor(
-        @inject(TYPES.Roles_Repository)
+        @inject(TYPES.rolesRepository)
         private rolesRepository: IRolesOnUsersRepository,
     ) {}
 

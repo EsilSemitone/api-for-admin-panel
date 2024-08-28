@@ -68,7 +68,6 @@ export class LocalPrismaService {
     db: PrismaClient;
     constructor() {
         this.db = new PrismaClient();
-        this.connect();
     }
 
     connect(): void {
@@ -133,17 +132,7 @@ export class LocalPrismaService {
             return null;
         }
 
-        const { id, description, price, type, createdAt, updatedAt } = result;
-
-        return new Product(
-            id,
-            title,
-            description,
-            price,
-            type as ProductsType,
-            createdAt,
-            updatedAt,
-        );
+        return new Product(result);
     }
 }
 

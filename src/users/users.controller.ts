@@ -20,11 +20,11 @@ import { Roles } from '../roles/roles';
 @injectable()
 export class UsersController extends Controller implements IController {
     constructor(
-        @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.Users_Service) private usersService: IUsersService,
-        @inject(TYPES.Jwt_Service) private jwtService: IJwtService,
-        @inject(TYPES.Auth_Guard_Factory) private authGuardFactory: IAuthGuardFactory,
-        @inject(TYPES.Roles_Service) private rolesService: IRolesService,
+        @inject(TYPES.logger) private logger: ILogger,
+        @inject(TYPES.usersService) private usersService: IUsersService,
+        @inject(TYPES.jwtService) private jwtService: IJwtService,
+        @inject(TYPES.authGuardFactory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.rolesService) private rolesService: IRolesService,
     ) {
         super();
         this.bindRouts([

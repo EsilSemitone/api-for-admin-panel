@@ -12,12 +12,13 @@ import { ValidateMiddleware } from '../common/validate.middleware';
 import { ProductAddByStockDto } from './dto/product.addByStock.dto';
 import { ProductDeleteDto } from './dto/product.delete.dto';
 import { ProductUpdateDto } from './dto/product.update.dto';
+import { ProductsFilterQueryParams } from './dto/products.query.dto';
 
 @injectable()
 export class ProductsController extends Controller implements IController {
     constructor(
-        @inject(TYPES.Auth_Guard_Factory) private authGuardFactory: IAuthGuardFactory,
-        @inject(TYPES.ProductsService) private productService: IProductsService,
+        @inject(TYPES.authGuardFactory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.productsService) private productService: IProductsService,
     ) {
         super();
 
@@ -27,22 +28,22 @@ export class ProductsController extends Controller implements IController {
                 method: 'get',
                 func: this.getProducts,
                 middlewares: [
-                    // authGuardFactory.create(['ADMIN']),
-                    new ValidateQueryFilterMiddleware(),
+                    authGuardFactory.create(['ADMIN']),
+                    new ValidateQueryFilterMiddleware(ProductsFilterQueryParams),
                 ],
             },
             {
                 path: '/stock',
                 method: 'get',
                 func: this.getProductsOfStock,
-                // middlewares: [authGuardFactory.create(['GENERAL_WAREHOUSE'])],
+                middlewares: [authGuardFactory.create(['GENERAL_WAREHOUSE'])],
             },
             {
                 path: '/create',
                 method: 'post',
                 func: this.create,
                 middlewares: [
-                    // authGuardFactory.create(['ADMIN']),
+                    authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductsCreateDto),
                 ],
             },
@@ -51,7 +52,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'post',
                 func: this.addProductsOfStock,
                 middlewares: [
-                    // authGuardFactory.create(['GENERAL_WAREHOUSE']),
+                    authGuardFactory.create(['GENERAL_WAREHOUSE']),
                     new ValidateMiddleware(ProductAddByStockDto),
                 ],
             },
@@ -60,7 +61,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'delete',
                 func: this.delete,
                 middlewares: [
-                    // authGuardFactory.create(['ADMIN']),
+                    authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductDeleteDto),
                 ],
             },
@@ -69,7 +70,7 @@ export class ProductsController extends Controller implements IController {
                 method: 'patch',
                 func: this.update,
                 middlewares: [
-                    // authGuardFactory.create(['ADMIN']),
+                    authGuardFactory.create(['ADMIN']),
                     new ValidateMiddleware(ProductUpdateDto),
                 ],
             },
@@ -77,7 +78,7 @@ export class ProductsController extends Controller implements IController {
     }
 
     async getProducts(
-        { productsFilter }: Request,
+        req: Request<{}, {}, {}, ProductsFilterQueryParams>,
         res: Response,
         next: NextFunction,
     ): Promise<void> {
@@ -112,7 +113,7 @@ export class ProductsController extends Controller implements IController {
         }
         #swagger.end
         */
-        const products = await this.productService.getAll(productsFilter);
+        const products = await this.productService.getAll(req.query);
 
         this.ok(res, products);
     }

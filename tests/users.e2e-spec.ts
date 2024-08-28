@@ -1,5 +1,4 @@
 import { App } from '../src/app';
-import { box } from '../src/main';
 import request from 'supertest';
 import { LocalPrismaService, common, endingTest, mainSeed } from './seed';
 import { _ADMIN } from './users';
@@ -177,7 +176,7 @@ describe('users e2e', () => {
             .set({ Authorization: `Bear ${token}` })
             .send({ email: 'GENERAL_WAREHOUSd_1@mail.ru' });
 
-        expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(401);
+        expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(404);
     });
 });
 

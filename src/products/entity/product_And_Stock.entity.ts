@@ -1,23 +1,29 @@
+import { ProductsType } from '../products.types';
 import { Product } from './product.entity';
 import { ProductOfStock } from './product_Of_Stock.entity';
 
 export class ProductAndStock {
-    constructor(
-        private _product: Product,
-        private _stock: ProductOfStock,
-    ) {}
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    type: ProductsType;
+    createdAt: Date;
+    updatedAt: Date;
+    amount: number;
+    createdAtStock: Date;
+    updatedAtStock: Date;
 
-    get product(): Product {
-        return this._product;
-    }
-    set product(product: Product) {
-        this._product = product;
-    }
-
-    get stock(): ProductOfStock {
-        return this._stock;
-    }
-    set stock(stock: ProductOfStock) {
-        this._stock = stock;
+    constructor(product: Product, stock: ProductOfStock) {
+        this.id = product.id;
+        this.title = product.title;
+        this.description = product.description;
+        this.price = product.price;
+        this.type = product.type;
+        this.createdAt = product.createdAt;
+        this.updatedAt = product.updatedAt;
+        this.amount = stock.amount;
+        this.createdAtStock = stock.createdAt;
+        this.updatedAtStock = stock.updatedAt;
     }
 }

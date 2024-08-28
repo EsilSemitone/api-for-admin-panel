@@ -109,9 +109,15 @@ describe('products e2e', () => {
 
     it('Add products of stock [Admin, General warehouse]', async () => {
         const existProduct = await prismaService.getProductByTitle('book');
-        const existProductId = existProduct?.id as number;
         const productIsNotExistByStock = await prismaService.getProductByTitle('ring');
-        const productIsNotExistByStockId = productIsNotExistByStock?.id as number;
+
+        if (!productIsNotExistByStock || !existProduct) {
+            return new Error(
+                'Произошла ошибка заполнения бд, не найдена запись -> продукт с названием book или ring. Подробнее "Add products of stock [Admin, General warehouse]"',
+            );
+        }
+        const existProductId = existProduct.id;
+        const productIsNotExistByStockId = productIsNotExistByStock.id;
 
         const [adminResponse, generalWarehouseResponse, userResponse] = await getResponses(
             '/products/add',
@@ -119,7 +125,7 @@ describe('products e2e', () => {
             { productId: existProductId, amount: 1 },
         );
         expect(adminResponse.statusCode).toBe(403);
-        expect(JSON.parse(generalWarehouseResponse.text)._amount).toBe(11);
+        expect(JSON.parse(generalWarehouseResponse.text).amount).toBe(11);
         expect(userResponse.statusCode).toBe(403);
 
         const [adminResponse2, generalWarehouseResponse2, userResponse2] = await getResponses(
@@ -129,7 +135,7 @@ describe('products e2e', () => {
         );
 
         expect(adminResponse2.statusCode).toBe(403);
-        expect(JSON.parse(generalWarehouseResponse2.text)._amount).toBe(1);
+        expect(JSON.parse(generalWarehouseResponse2.text).amount).toBe(1);
         expect(userResponse2.statusCode).toBe(403);
     });
 
@@ -152,7 +158,7 @@ describe('products e2e', () => {
             { title: 'keyboard', description: 'for PC', price: 5900, type: 'OFFICE' },
         );
 
-        expect(JSON.parse(adminResponse.text)._title).toBe('keyboard');
+        expect(JSON.parse(adminResponse.text).title).toBe('keyboard');
         expect(generalWarehouseResponse.statusCode).toBe(403);
         expect(userResponse.statusCode).toBe(403);
     });
@@ -195,24 +201,30 @@ describe('products e2e', () => {
 
     it('update exist product', async () => {
         const existProduct = await prismaService.getProductByTitle('book');
-        const existProductId = existProduct?.id as number;
+
+        if (!existProduct) {
+            throw new Error('Не получилось найти продукт "book" [update exist product]');
+        }
+        const existProductId = existProduct.id;
 
         const [adminResponse, generalWarehouseResponse, userResponse] = await getResponses(
             '/products/update',
             'patch',
             {
                 id: existProductId,
-                title: 'new title',
-                description: 'new description',
-                price: 999,
-                type: 'FURNITURE',
+                updatedData: {
+                    title: 'new title',
+                    description: 'new description',
+                    price: 999,
+                    type: 'FURNITURE',
+                },
             },
         );
 
-        expect(JSON.parse(adminResponse.text)._title).toBe('new title');
-        expect(JSON.parse(adminResponse.text)._description).toBe('new description');
-        expect(JSON.parse(adminResponse.text)._price).toBe(999);
-        expect(JSON.parse(adminResponse.text)._type).toBe('FURNITURE');
+        expect(JSON.parse(adminResponse.text).title).toBe('new title');
+        expect(JSON.parse(adminResponse.text).description).toBe('new description');
+        expect(JSON.parse(adminResponse.text).price).toBe(999);
+        expect(JSON.parse(adminResponse.text).type).toBe('FURNITURE');
 
         expect(generalWarehouseResponse.statusCode).toBe(403);
         expect(userResponse.statusCode).toBe(403);

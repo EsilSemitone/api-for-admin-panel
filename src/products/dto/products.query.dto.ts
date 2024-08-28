@@ -1,22 +1,23 @@
 import { Type } from 'class-transformer';
-import {
-    IsIn,
-    IsNumber,
-    IsNumberString,
-    IsString,
-    ValidateIf,
-    ValidateNested,
-} from 'class-validator';
+import { IsIn, IsNumberString, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { Products, ProductsType } from '../products.types';
+import { Prisma } from '@prisma/client';
 
-class ProductsFilterPrice {
+export type parsePriceReturnType =
+    | {
+          gte: number | undefined;
+          lte: number | undefined;
+      }
+    | undefined;
+
+export class ProductsFilterPrice {
     @ValidateIf(o => o.from !== undefined)
     @IsNumberString()
-    from?: string | number;
+    from?: number;
 
     @ValidateIf(o => o.to !== undefined)
     @IsNumberString()
-    to?: string | number;
+    to?: number;
 }
 
 export class ProductsFilterQueryParams {
@@ -36,5 +37,34 @@ export class ProductsFilterQueryParams {
     @IsIn(['createdAt', 'updatedAt'], {
         message: "Параметр sort принимает только следующие значения ['createdAt' | 'updatedAt']",
     })
-    date?: 'createdAt' | 'updatedAt';
+    sortByDate?: 'createdAt' | 'updatedAt';
+
+    static parseSortByDate(
+        param: 'createdAt' | 'updatedAt' | undefined,
+    ): Prisma.ProductOrderByWithRelationInput {
+        if (!param) {
+            return {};
+        }
+
+        switch (param) {
+            case 'createdAt':
+                return { createdAt: 'desc' };
+            case 'updatedAt':
+                return { updatedAt: 'desc' };
+        }
+    }
+
+    static parsePrice(param: ProductsFilterPrice | undefined): parsePriceReturnType {
+        //эти функции нужны потому что на сервер в любом случе вместо числа приходит строка
+        if (!param) {
+            return undefined;
+        }
+
+        param.from ? (param.from = Number(param.from)) : (param.to = Number(param.to));
+
+        return {
+            gte: param.from,
+            lte: param.to,
+        };
+    }
 }

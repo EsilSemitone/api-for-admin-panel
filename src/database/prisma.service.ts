@@ -8,16 +8,14 @@ import { ILogger } from '../logger/logger.service.interface';
 export class PrismaService {
     dbClient: PrismaClient;
 
-    constructor(@inject(TYPES.Logger) private logger: ILogger) {
+    constructor(@inject(TYPES.logger) private logger: ILogger) {
         this.dbClient = new PrismaClient();
     }
 
     public async connect(): Promise<void> {
         try {
             await this.dbClient.$connect();
-            this.logger.success(
-                '[PrismaService]  Соединение с базой данных установлено',
-            );
+            this.logger.success('[PrismaService]  Соединение с базой данных установлено');
         } catch (e) {
             this.logDBError(e);
         }
@@ -26,9 +24,7 @@ export class PrismaService {
     public async disConnect(): Promise<void> {
         try {
             await this.dbClient.$disconnect();
-            this.logger.success(
-                '[PrismaService]  Успешное отключение от базы данных',
-            );
+            this.logger.success('[PrismaService]  Успешное отключение от базы данных');
         } catch (e) {
             this.logDBError(e);
         }

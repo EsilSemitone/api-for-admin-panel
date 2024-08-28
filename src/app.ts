@@ -16,11 +16,11 @@ export class App {
     app: Express;
 
     constructor(
-        @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.Users_Controller) private usersController: IController,
-        @inject(TYPES.Exceptions_Filters) private exceptionFilters: IExceptionsFilters,
-        @inject(TYPES.Admin_Controller) private adminController: IController,
-        @inject(TYPES.ProductsController) private productsController: IController,
+        @inject(TYPES.logger) private logger: ILogger,
+        @inject(TYPES.usersController) private usersController: IController,
+        @inject(TYPES.exceptionsFilters) private exceptionFilters: IExceptionsFilters,
+        @inject(TYPES.adminController) private adminController: IController,
+        @inject(TYPES.productsController) private productsController: IController,
     ) {
         this.app = express();
         this.port = 8000;

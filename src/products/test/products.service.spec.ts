@@ -6,7 +6,7 @@ import { TYPES } from '../../injectsTypes';
 import { ProductsService } from '../products.service';
 import { Product } from '../entity/product.entity';
 import { ProductOfStock } from '../entity/product_Of_Stock.entity';
-import { ProductUpdateDto } from '../dto/product.update.dto';
+import { ProductUpdateDto, UpdatedData } from '../dto/product.update.dto';
 
 const productRepositoryMock = {
     findByTitle: jest.fn(),
@@ -18,6 +18,7 @@ const productRepositoryMock = {
     getAllByStock: jest.fn(),
     addByStock: jest.fn(),
     createByStock: jest.fn(),
+    softDelete: jest.fn(),
     delete: jest.fn(),
     update: jest.fn(),
 };
@@ -28,28 +29,44 @@ let productsRepository: IProductsRepository;
 beforeAll(() => {
     const container = new Container();
     container
-        .bind<IProductsRepository>(TYPES.ProductsRepository)
+        .bind<IProductsRepository>(TYPES.productsRepository)
         .toConstantValue(productRepositoryMock);
-    container.bind<IProductsService>(TYPES.ProductsService).to(ProductsService);
+    container.bind<IProductsService>(TYPES.productsService).to(ProductsService);
 
-    productsService = container.get<IProductsService>(TYPES.ProductsService);
-    productsRepository = container.get<IProductsRepository>(TYPES.ProductsRepository);
+    productsService = container.get<IProductsService>(TYPES.productsService);
+    productsRepository = container.get<IProductsRepository>(TYPES.productsRepository);
 });
 
-const AllProducts = [
-    new Product(1, 'Beer', 'alcohol drink', 100, 'ALCOHOL', new Date(), new Date()),
-    new Product(2, 'Beer2', 'alcohol drink2', 200, 'ALCOHOL', new Date(), new Date()),
+const baseProducts = [
+    new Product({
+        id: 1,
+        title: 'Beer',
+        description: 'alcohol drink',
+        price: 100,
+        type: 'ALCOHOL',
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    }),
+    new Product({
+        id: 2,
+        title: 'Beer2',
+        description: 'alcohol drink2',
+        price: 200,
+        type: 'ALCOHOL',
+        isDeleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    }),
 ];
 
-const AllProductsByFilter = [
-    new Product(1, 'Beer', 'alcohol drink', 100, 'ALCOHOL', new Date(), new Date()),
-];
+const AllProductsByFilter = [baseProducts[0]];
 
 describe('product Service', () => {
     it('get all products without filter', async () => {
-        productsRepository.getAll = jest.fn().mockReturnValueOnce(AllProducts);
-        const result = await productsService.getAll();
-        expect(result).toBe(AllProducts);
+        productsRepository.getAll = jest.fn().mockReturnValueOnce(baseProducts);
+        const result = await productsService.getAll({});
+        expect(result).toBe(baseProducts);
     });
 
     it('get all products', async () => {
@@ -65,42 +82,43 @@ describe('product Service', () => {
         expect(result).toBe(null);
     });
     it('add products on stock [product exist but not found by stock]', async () => {
-        productsRepository.findById = jest
-            .fn()
-            .mockReturnValueOnce(
-                new Product(1, 'Beer', 'alcohol drink', 100, 'ALCOHOL', new Date(), new Date()),
-            );
+        productsRepository.findById = jest.fn().mockReturnValueOnce(baseProducts[0]);
         productsRepository.findAtStock = jest.fn().mockReturnValueOnce(null);
         productsRepository.createByStock = jest
             .fn()
             .mockImplementation((productId: number, amount: number) => {
-                return new ProductOfStock(productId, amount, new Date(), new Date());
+                return new ProductOfStock({
+                    id: 1,
+                    productId,
+                    amount,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                });
             });
         const result = await productsService.addByStock({ productId: 1, amount: 10 });
         expect(result?.amount).toBe(10);
     });
 
     it('update product', async () => {
-        let updateData: Partial<ProductUpdateDto>;
+        let updateData: UpdatedData;
 
-        productsRepository.findById = jest
-            .fn()
-            .mockReturnValueOnce(
-                new Product(1, 'Beer', 'alcohol drink', 100, 'ALCOHOL', new Date(), new Date()),
-            );
+        productsRepository.findById = jest.fn().mockReturnValueOnce(baseProducts[0]);
 
         productsRepository.update = jest.fn().mockImplementation((id, data) => {
             updateData = data;
-            return new Product(1, 'Beer', 'alcohol drink', 100, 'ALCOHOL', new Date(), new Date());
+            return baseProducts[0];
         });
         const result = await productsService.update({
             id: 1,
-            title: 'new_title',
-            description: 'new_description',
-            price: 200,
+            updatedData: {
+                title: 'new_title',
+                description: 'new_description',
+                price: 200,
+                type: 'ALCOHOL',
+            },
         });
 
-        expect(Object.keys(updateData!).length).toBe(3);
+        expect(Object.keys(updateData!).length).toBe(4);
         expect(updateData!.price).toBe(200);
     });
 });

@@ -11,7 +11,7 @@ import { RolesType } from '../roles/roles';
 export class JWTService implements IJwtService {
     secret: string;
 
-    constructor(@inject(TYPES.Config_Service) private configService: IConfigService) {
+    constructor(@inject(TYPES.configService) private configService: IConfigService) {
         this.secret = this.configService.get('SECRET');
     }
 

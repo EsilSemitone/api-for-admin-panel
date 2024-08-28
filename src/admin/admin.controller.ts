@@ -17,10 +17,10 @@ import { Roles } from '../roles/roles';
 @injectable()
 export class AdminController extends Controller implements IController {
     constructor(
-        @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.Auth_Guard_Factory) private authGuardFactory: IAuthGuardFactory,
-        @inject(TYPES.Roles_Service) private rolesService: IRolesService,
-        @inject(TYPES.Users_Service) private userService: IUsersService,
+        @inject(TYPES.logger) private logger: ILogger,
+        @inject(TYPES.authGuardFactory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.rolesService) private rolesService: IRolesService,
+        @inject(TYPES.usersService) private userService: IUsersService,
     ) {
         super();
         this.bindRouts([
