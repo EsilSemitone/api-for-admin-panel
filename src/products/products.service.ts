@@ -20,13 +20,17 @@ export class ProductsService implements IProductsService {
         @inject(TYPES.productsRepository) private productsRepository: IProductsRepository,
     ) {}
 
-    async getAll({ type, price, sortByDate }: ProductServiceInputParamsGetAll): Promise<Product[]> {
+    async getAll({page, size, type, price, sortByDate }: ProductServiceInputParamsGetAll): Promise<Product[]> {
+
+        if (page === undefined || size === undefined) {
+            throw new Error('Не переданы параметры [page, size], блок проверки пропустил пустые значения')
+        }
         if (!(type || price || sortByDate)) {
-            const result = await this.productsRepository.getAll();
+            const result = await this.productsRepository.getAll(Number(page), Number(size));
             return result;
         }
 
-        const result = await this.productsRepository.getAllByFilter({ type, price, sortByDate });
+        const result = await this.productsRepository.getAllByFilter(Number(page), Number(size), { type, price, sortByDate });
         return result;
     }
 

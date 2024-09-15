@@ -44,15 +44,17 @@ export class ProductsRepository implements IProductsRepository {
         return new ProductOfStock(result);
     }
 
-    async getAll(): Promise<Product[]> {
+    async getAll(page: number, size: number): Promise<Product[]> {
         const products = await this.prismaService.dbClient.product.findMany({
+            skip: size * page,
+            take: size,
             where: { isDeleted: false },
         });
 
         return products.map(product => new Product(product));
     }
 
-    async getAllByFilter({
+    async getAllByFilter(page: number, size: number, {
         type,
         price,
         sortByDate,
@@ -61,6 +63,8 @@ export class ProductsRepository implements IProductsRepository {
         const parsePrice = ProductsFilterQueryParams.parsePrice(price);
 
         const result = await this.prismaService.dbClient.product.findMany({
+            skip: size * page,
+            take: page,
             where: {
                 isDeleted: false,
                 type,

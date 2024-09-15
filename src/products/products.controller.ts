@@ -114,7 +114,6 @@ export class ProductsController extends Controller implements IController {
         #swagger.end
         */
         const products = await this.productService.getAll(req.query);
-
         this.ok(res, products);
     }
 

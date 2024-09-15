@@ -12,8 +12,9 @@ export interface IProductsRepository {
     findByTitle(title: string): Promise<Product | null>;
     findById(id: number): Promise<Product | null>;
     findAtStock(productId: number): Promise<ProductOfStock | null>;
-    getAll(): Promise<Product[]>;
+    getAll(page: number, size: number): Promise<Product[]>;
     getAllByFilter(
+        page: number, size: number,
         filter: Pick<ProductServiceInputParamsGetAll, 'type' | 'price' | 'sortByDate'>,
     ): Promise<Product[]>;
     create(product: ProductsCreateDto): Promise<Product>;

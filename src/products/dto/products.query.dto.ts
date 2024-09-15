@@ -1,7 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsNumberString, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { IsIn, IsNotIn, IsNumberString, IsString, Max, Min, min, NotContains, ValidateIf, ValidateNested } from 'class-validator';
 import { Products, ProductsType } from '../products.types';
 import { Prisma } from '@prisma/client';
+import { IsMinThan, IsMoreThan } from '../common/custom-classValidator-decorators';
 
 export type parsePriceReturnType =
     | {
@@ -21,6 +22,15 @@ export class ProductsFilterPrice {
 }
 
 export class ProductsFilterQueryParams {
+    @IsNumberString()
+    @IsMoreThan(-1)
+    page?: number;
+    
+    @IsNumberString()
+    @IsMinThan(101)
+    @IsMoreThan(0)
+    size?: number;
+
     @ValidateIf(o => o.price !== undefined)
     @IsIn(Object.values(Products), {
         message: `Параметр type принимает только следующие значения [${JSON.stringify(Object.values(Products))}]`,
