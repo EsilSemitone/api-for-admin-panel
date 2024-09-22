@@ -1,8 +1,5 @@
-import { ProductAddByStockDto } from '../dto/product.addByStock.dto';
-import { ProductDeleteDto } from '../dto/product.delete.dto';
-import { ProductUpdateDto, UpdatedData } from '../dto/product.update.dto';
+import { UpdatedData } from '../dto/product.update.dto';
 import { ProductsCreateDto } from '../dto/products.create.dto';
-import { ProductsFilterQueryParams } from '../dto/products.query.dto';
 import { Product } from '../entity/product.entity';
 import { ProductAndStock } from '../entity/product_And_Stock.entity';
 import { ProductOfStock } from '../entity/product_Of_Stock.entity';

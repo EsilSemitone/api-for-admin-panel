@@ -64,7 +64,7 @@ export class ProductsRepository implements IProductsRepository {
 
         const result = await this.prismaService.dbClient.product.findMany({
             skip: size * page,
-            take: page,
+            take: size,
             where: {
                 isDeleted: false,
                 type,
