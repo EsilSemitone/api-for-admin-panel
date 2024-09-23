@@ -1,7 +1,7 @@
 import { App } from '../src/app';
-import { box } from '../src/main';
 import request from 'supertest';
-import { LocalPrismaService, endingTest, mainSeed } from './seed';
+import { LocalPrismaService, common, endingTest, mainSeed } from './seed';
+import { _ADMIN } from './users';
 
 let application: App;
 let prismaService: LocalPrismaService;
@@ -18,24 +18,11 @@ const userRegisterDtoNoExist = {
     password: 'USER1USER1',
 };
 
-const ADMIN = {
-    name: 'ADMIN',
-    email: 'ADMIN@mail.ru',
-    password: 'ADMINADMIN',
-};
-
-const GENERAL_WAREHOUS = {
-    name: 'GENERAL_WAREHOUS',
-    email: 'GENERAL_WAREHOUS@mail.ru',
-    password: 'GENERAL_WAREHOUS',
-};
-
 beforeAll(async () => {
-    prismaService = new LocalPrismaService();
-    await mainSeed(prismaService);
-
-    const { app } = await box;
+    const { app, localPrismaService } = await common;
+    prismaService = localPrismaService;
     application = app;
+    await mainSeed(prismaService);
 });
 
 afterEach(async () => {
@@ -135,7 +122,7 @@ describe('users e2e', () => {
     });
 
     it('appoint role success', async () => {
-        const loginAdminResponse = await request(application.app).post('/users/login').send(ADMIN);
+        const loginAdminResponse = await request(application.app).post('/users/login').send(_ADMIN);
 
         const token = loginAdminResponse.body.token;
 
@@ -167,7 +154,7 @@ describe('users e2e', () => {
     });
 
     it('remove role success', async () => {
-        const loginAdminResponse = await request(application.app).post('/users/login').send(ADMIN);
+        const loginAdminResponse = await request(application.app).post('/users/login').send(_ADMIN);
 
         const token = loginAdminResponse.body.token;
 
@@ -180,7 +167,7 @@ describe('users e2e', () => {
     });
 
     it('remove role error', async () => {
-        const loginAdminResponse = await request(application.app).post('/users/login').send(ADMIN);
+        const loginAdminResponse = await request(application.app).post('/users/login').send(_ADMIN);
 
         const token = loginAdminResponse.body.token;
 
@@ -189,11 +176,11 @@ describe('users e2e', () => {
             .set({ Authorization: `Bear ${token}` })
             .send({ email: 'GENERAL_WAREHOUSd_1@mail.ru' });
 
-        expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(401);
+        expect(removeGeneralWarehouseRoleResponse.statusCode).toBe(404);
     });
 });
 
 afterAll(async () => {
     application.close();
-    await endingTest();
+    await endingTest(prismaService);
 });

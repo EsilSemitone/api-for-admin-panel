@@ -3,3 +3,4 @@
 /dist
 /config/pgdata
 .vscode
+session.json

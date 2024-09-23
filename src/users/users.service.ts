@@ -14,9 +14,9 @@ import { Roles } from '../roles/roles';
 @injectable()
 export class UsersService implements IUsersService {
     constructor(
-        @inject(TYPES.Config_Service) private configService: IConfigService,
-        @inject(TYPES.User_Repository) private usersRepository: IUsersRepository,
-        @inject(TYPES.Roles_Repository)
+        @inject(TYPES.configService) private configService: IConfigService,
+        @inject(TYPES.userRepository) private usersRepository: IUsersRepository,
+        @inject(TYPES.rolesRepository)
         private rolesOnUsersRepository: IRolesOnUsersRepository,
     ) {}
 

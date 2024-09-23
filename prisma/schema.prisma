@@ -38,4 +38,15 @@ model Product {
   type        String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
+  stock       Stock?
+}
+
+model Stock {
+  id        Int      @id @default(autoincrement())
+  productId Int      @unique
+  amount    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

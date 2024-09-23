@@ -7,6 +7,7 @@ import { TYPES } from './injectsTypes';
 import { ILogger } from './logger/logger.service.interface';
 import { IExceptionsFilters } from './exceptionFilters/exceptions.filters.interface';
 import { IController } from './common/interfaces/controller.interface';
+import { swaggerMiddlewares } from './swagger/swagger.middleware';
 
 @injectable()
 export class App {
@@ -15,10 +16,11 @@ export class App {
     app: Express;
 
     constructor(
-        @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.Users_Controller) private usersController: IController,
-        @inject(TYPES.Exceptions_Filters) private exceptionFilters: IExceptionsFilters,
-        @inject(TYPES.Admin_Controller) private adminController: IController,
+        @inject(TYPES.logger) private logger: ILogger,
+        @inject(TYPES.usersController) private usersController: IController,
+        @inject(TYPES.exceptionsFilters) private exceptionFilters: IExceptionsFilters,
+        @inject(TYPES.adminController) private adminController: IController,
+        @inject(TYPES.productsController) private productsController: IController,
     ) {
         this.app = express();
         this.port = 8000;
@@ -35,6 +37,8 @@ export class App {
     private useRoutes(): void {
         this.app.use('/users', this.usersController.router);
         this.app.use('/admin', this.adminController.router);
+        this.app.use('/products', this.productsController.router);
+        this.app.use('/api-doc', swaggerMiddlewares());
     }
 
     public async init(): Promise<void> {

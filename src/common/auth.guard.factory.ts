@@ -9,7 +9,7 @@ import { RolesType } from '../roles/roles';
 
 @injectable()
 export class AuthGuardFactory implements IAuthGuardFactory {
-    constructor(@inject(TYPES.Jwt_Service) private jwtService: IJwtService) {}
+    constructor(@inject(TYPES.jwtService) private jwtService: IJwtService) {}
 
     create(role: RolesType[]): IMiddleware {
         return new AuthGuard(role, this.jwtService);

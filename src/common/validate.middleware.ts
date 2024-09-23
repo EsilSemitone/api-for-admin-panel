@@ -12,25 +12,24 @@ export class ValidateMiddleware implements IMiddleware {
 
         validate(instance).then(errors => {
             if (errors.length > 0) {
-                const errorsResult = this.extractErrors(errors);
-
+                const errorsResult = extractErrors(errors);
                 next(new HttpException('На сервер не верно переданы данные', 422, errorsResult));
             } else {
                 next();
             }
         });
     }
+}
 
-    extractErrors(data: ValidationError[]): string {
-        const res: string = data
-            .map(({ constraints, children }) => {
-                const res1 =
-                    typeof constraints === 'object' ? Object.values(constraints).join(', ') : '';
-                const res2 = typeof children === 'object' ? this.extractErrors(children) : '';
-                return res1 + res2;
-            })
-            .join(', ');
+export function extractErrors(data: ValidationError[]): string {
+    const res: string = data
+        .map(({ constraints, children }) => {
+            const res1 =
+                typeof constraints === 'object' ? Object.values(constraints).join(', ') : '';
+            const res2 = typeof children === 'object' ? extractErrors(children) : '';
+            return res1 + res2;
+        })
+        .join(', ');
 
-        return res;
-    }
+    return res;
 }

@@ -20,11 +20,11 @@ import { Roles } from '../roles/roles';
 @injectable()
 export class UsersController extends Controller implements IController {
     constructor(
-        @inject(TYPES.Logger) private logger: ILogger,
-        @inject(TYPES.Users_Service) private usersService: IUsersService,
-        @inject(TYPES.Jwt_Service) private jwtService: IJwtService,
-        @inject(TYPES.Auth_Guard_Factory) private authGuardFactory: IAuthGuardFactory,
-        @inject(TYPES.Roles_Service) private rolesService: IRolesService,
+        @inject(TYPES.logger) private logger: ILogger,
+        @inject(TYPES.usersService) private usersService: IUsersService,
+        @inject(TYPES.jwtService) private jwtService: IJwtService,
+        @inject(TYPES.authGuardFactory) private authGuardFactory: IAuthGuardFactory,
+        @inject(TYPES.rolesService) private rolesService: IRolesService,
     ) {
         super();
         this.bindRouts([
@@ -67,12 +67,49 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<Response | void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/users/register'
+        #swagger.method = 'post'
+        #swagger.description = 'Register new user.'
+        #swagger.tags = ['Users']
+ 
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userRegister"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success register new user",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successRegister",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[422] = {
+            description: "User already registered",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/userAlreadyRegistered",           
+                    }
+                }           
+            }
+        }
+        #swagger.end
+        */
         const result = await this.usersService.createUser(body);
 
         if (!result) {
-            return next(
-                new HttpException('Пользователь уже зарегистрирован', 422, JSON.stringify(body)),
-            );
+            return next(new HttpException('Пользователь уже зарегистрирован', 422, body));
         }
 
         return this.ok(res, { message: 'Пользователь успешно зарегистрирован' });
@@ -83,6 +120,55 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void | Response> {
+        // #swagger.start
+        /*
+        #swagger.path = '/users/login'
+        #swagger.method = 'post'
+        #swagger.description = 'Login use email and password.'
+        #swagger.tags = ['Users']
+ 
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/loginUser"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success register new user",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successLogin",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[401] = {
+            description: "Wrong email or password",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/wrongData",
+                    }
+                }           
+            }
+        }
+        #swagger.responses[422] = {
+            description: "Failed validation",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/errorMessage",              
+                    },
+                }           
+            }
+        }
+        #swagger.end
+        */
         const validUser = await this.usersService.validateUser(body);
 
         if (!validUser) {
@@ -99,6 +185,41 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        // #swagger.start
+        /*
+
+        #swagger.path = '/users/delete'
+        #swagger.method = 'delete'
+        #swagger.description = 'Delete user by own id.'
+        #swagger.tags = ['Users']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+ 
+        #swagger.responses[200] = {
+            description: "Success deleted new user",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/successDelete",
+                    }
+                }           
+            }
+        } 
+
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.end
+        */
+
         if (typeof req.id !== 'number') {
             return next(
                 new HttpException(
@@ -110,7 +231,7 @@ export class UsersController extends Controller implements IController {
         }
         await this.usersService.deleteUser(req.id);
 
-        this.ok(res, 'Пользователь успешно удален');
+        this.ok(res, { message: 'Пользователь успешно удален' });
     }
 
     async update(
@@ -118,6 +239,68 @@ export class UsersController extends Controller implements IController {
         res: Response,
         next: NextFunction,
     ): Promise<void> {
+        // #swagger.start
+        /*
+        #swagger.path = '/users/update'
+        #swagger.method = 'patch'
+        #swagger.description = 'Update user data.'
+        #swagger.tags = ['Users']
+        #swagger.security = [{
+            "bearerAuth": []
+        }]
+ 
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/userUpdate"
+                    } 
+                }
+            }
+        } 
+        #swagger.responses[200] = {
+            description: "Success update",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/userSuccessUpdate",
+                    }
+                }           
+            }
+        }   
+        #swagger.responses[403] = {
+            description: "Failed authorization",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/authorizationError",            
+                    },
+                }           
+            }
+        }
+        #swagger.responses[404] = {
+            description: "User is not exist",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/userIsNotExist",
+                    }
+                }           
+            }
+        }
+        #swagger.responses[422] = {
+            description: "Failed validation",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/errorMessage",              
+                    },
+                }           
+            }
+        }
+        #swagger.end
+        */
         const { body, id } = req;
 
         if (typeof id !== 'number') {
@@ -138,6 +321,6 @@ export class UsersController extends Controller implements IController {
             );
         }
 
-        this.ok(res, `${body.paramName} успешно обновлен`);
+        this.ok(res, { message: `${body.paramName} успешно обновлен` });
     }
 }

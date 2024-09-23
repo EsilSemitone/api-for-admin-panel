@@ -75,17 +75,17 @@ const invalidUserUpdateDto: UserUpdateDto = {
 };
 
 beforeAll(() => {
-    container.bind<IUsersService>(TYPES.Users_Service).to(UsersService);
-    container.bind<IConfigService>(TYPES.Config_Service).toConstantValue(configServiceMock);
-    container.bind<IUsersRepository>(TYPES.User_Repository).toConstantValue(usersRepositoryMock);
+    container.bind<IUsersService>(TYPES.usersService).to(UsersService);
+    container.bind<IConfigService>(TYPES.configService).toConstantValue(configServiceMock);
+    container.bind<IUsersRepository>(TYPES.userRepository).toConstantValue(usersRepositoryMock);
     container
-        .bind<IRolesOnUsersRepository>(TYPES.Roles_Repository)
+        .bind<IRolesOnUsersRepository>(TYPES.rolesRepository)
         .toConstantValue(rolesOnUsersRepositoryMock);
 
-    usersService = container.get<IUsersService>(TYPES.Users_Service);
-    configService = container.get<IConfigService>(TYPES.Config_Service);
-    usersRepository = container.get<IUsersRepository>(TYPES.User_Repository);
-    rolesOnUsersRepository = container.get<IRolesOnUsersRepository>(TYPES.Roles_Repository);
+    usersService = container.get<IUsersService>(TYPES.usersService);
+    configService = container.get<IConfigService>(TYPES.configService);
+    usersRepository = container.get<IUsersRepository>(TYPES.userRepository);
+    rolesOnUsersRepository = container.get<IRolesOnUsersRepository>(TYPES.rolesRepository);
 });
 
 describe('user service', () => {

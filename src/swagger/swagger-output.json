@@ -1,0 +1,1093 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Todo API",
+    "description": "My todo API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/"
+    }
+  ],
+  "paths": {
+    "/users/register": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Register new user.",
+        "responses": {
+          "200": {
+            "description": "Success register new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successRegister"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "User already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userAlreadyRegistered"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userRegister"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Login use email and password.",
+        "responses": {
+          "200": {
+            "description": "Success register new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successLogin"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/wrongData"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Failed validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorMessage"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/delete": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Delete user by own id.",
+        "responses": {
+          "200": {
+            "description": "Success deleted new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successDelete"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/update": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Update user data.",
+        "responses": {
+          "200": {
+            "description": "Success update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userSuccessUpdate"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User is not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userIsNotExist"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Failed validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorMessage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userUpdate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/appoint": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "description": "appoint role GENERAL_WAREHOUSE from user.",
+        "responses": {
+          "200": {
+            "description": "Success appoint role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successAppointRole"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User is not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/roleAppointUserIsNotExist"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/appointRole"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/remove": {
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "description": "delete role GENERAL_WAREHOUSE from user.",
+        "responses": {
+          "200": {
+            "description": "Success remove role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successRemoveRole"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User is not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/roleRemoveUserIsNotExist"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/removeRole"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Get all products.",
+        "responses": {
+          "200": {
+            "description": "Get all products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/stock": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Get all products by stock.",
+        "responses": {
+          "200": {
+            "description": "Get all products by stock",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productAndStock"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/add": {
+      "post": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Add some amount products of stock.",
+        "responses": {
+          "200": {
+            "description": "Success added, we get this product info by stock",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productsOfStock"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed search product by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productIdIsNotExist"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addProduct"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/create": {
+      "post": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Create a new product.",
+        "responses": {
+          "200": {
+            "description": "Success create a new product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Product with this name already exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productIdIsNotExist"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/productCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/delete": {
+      "delete": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Delete product by title.",
+        "responses": {
+          "200": {
+            "description": "Success delete product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/successDelete"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product with this name is not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productNameIsNotExist"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/productDelete"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/update": {
+      "patch": {
+        "tags": [
+          "Product"
+        ],
+        "description": "Update product property, for example - title.",
+        "responses": {
+          "200": {
+            "description": "Success update product property",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Expected least one property for update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/expectedProperty"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorizationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product with this id is not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/productIdIsNotExist_update"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/productUpdate"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "userRegister": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Alex"
+          },
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          },
+          "password": {
+            "type": "string",
+            "example": "sdv8sv9_vd99sevn"
+          }
+        }
+      },
+      "successRegister": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Пользователь успешно зарегистрирован"
+          }
+        }
+      },
+      "userAlreadyRegistered": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Пользователь уже зарегистрирован"
+          },
+          "error": {
+            "$ref": "#/components/schemas/userRegister"
+          }
+        }
+      },
+      "loginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          },
+          "password": {
+            "type": "string",
+            "example": "sdv8sv9_vd99sevn"
+          }
+        }
+      },
+      "wrongData": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Не верный логин или пароль"
+          }
+        }
+      },
+      "successLogin": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Аутентификация выполнена успешно"
+          },
+          "token": {
+            "type": "string",
+            "example": "some token"
+          }
+        }
+      },
+      "userUpdateParams": {
+        "type": "string",
+        "enum": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "successDelete": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Продукт с названием {body.title} удален."
+          }
+        }
+      },
+      "userDataUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Alex"
+          },
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          },
+          "password": {
+            "type": "string",
+            "example": "sdv8sv9_vd99sevn"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password"
+        ]
+      },
+      "userUpdate": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          },
+          "paramName": {
+            "$ref": "#/components/schemas/userUpdateParams"
+          },
+          "data": {
+            "$ref": "#/components/schemas/userDataUpdate"
+          }
+        }
+      },
+      "userIsNotExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Ошибка при обновлении данных"
+          },
+          "error": {
+            "$ref": "#/components/schemas/userUpdate"
+          }
+        }
+      },
+      "userSuccessUpdate": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "{username} успешно обновлен"
+          }
+        }
+      },
+      "infoMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "some message"
+          }
+        }
+      },
+      "errorMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "some message"
+          },
+          "error": {
+            "type": "string",
+            "example": "some error"
+          }
+        }
+      },
+      "authorizationError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Доступ ограничен"
+          },
+          "error": {
+            "type": "string",
+            "example": "У пользователя недостаточно прав"
+          }
+        }
+      },
+      "appointRole": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          }
+        }
+      },
+      "removeRole": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Alex@mail.ru"
+          }
+        }
+      },
+      "successResponseAppointRole": {
+        "type": "string",
+        "enum": [
+          "Роль назначена успешно",
+          "Пользователю уже назначена роль"
+        ]
+      },
+      "successAppointRole": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "$ref": "#/components/schemas/successResponseAppointRole"
+          }
+        }
+      },
+      "roleAppointUserIsNotExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Ошибка при назначении роли"
+          },
+          "error": {
+            "type": "string",
+            "example": "Пользователя не существует"
+          }
+        }
+      },
+      "successResponseRemoveRole": {
+        "type": "string",
+        "enum": [
+          "Роль успешно отозвана",
+          "У пользователя уже отсутствует роль"
+        ]
+      },
+      "successRemoveRole": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "$ref": "#/components/schemas/successResponseRemoveRole"
+          }
+        }
+      },
+      "roleRemoveUserIsNotExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Ошибка при удалении роли"
+          },
+          "error": {
+            "type": "string",
+            "example": "Пользователя не существует"
+          }
+        }
+      },
+      "productsTypes": {
+        "type": "string",
+        "enum": [
+          "ALCOHOL",
+          "BIJOUTERIE",
+          "FOR_KIDS",
+          "OFFICE",
+          "FURNITURE",
+          "COSMETICS",
+          "FOR_PETS"
+        ]
+      },
+      "product": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "number",
+            "example": 1
+          },
+          "_title": {
+            "type": "string",
+            "example": "Book"
+          },
+          "_description": {
+            "type": "string",
+            "example": "Planner book"
+          },
+          "_price": {
+            "type": "number",
+            "example": 200
+          },
+          "_type": {
+            "$ref": "#/components/schemas/productsTypes"
+          },
+          "_createdAt": {
+            "type": "string",
+            "example": "2024-08-11T13:55:59.124Z"
+          },
+          "_updatedAt": {
+            "type": "string",
+            "example": "2024-08-11T13:55:59.124Z"
+          }
+        }
+      },
+      "products": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/product"
+        }
+      },
+      "productsOfStock": {
+        "type": "object",
+        "properties": {
+          "_productId": {
+            "type": "number",
+            "example": 1
+          },
+          "_amount": {
+            "type": "number",
+            "example": 100
+          },
+          "_createdAt": {
+            "type": "string",
+            "example": "2024-08-11T14:07:39.647Z"
+          },
+          "_updatedAt": {
+            "type": "string",
+            "example": "2024-08-11T14:07:39.647Z"
+          }
+        }
+      },
+      "productAndStock": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_product": {
+              "$ref": "#/components/schemas/product"
+            },
+            "_stock": {
+              "$ref": "#/components/schemas/productsOfStock"
+            }
+          }
+        }
+      },
+      "addProduct": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "number",
+            "example": 1
+          },
+          "amount": {
+            "type": "number",
+            "example": 100
+          }
+        }
+      },
+      "productIdIsNotExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Продукта с таким id не существует"
+          },
+          "error": {
+            "$ref": "#/components/schemas/productsOfStock"
+          }
+        }
+      },
+      "productCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Book"
+          },
+          "description": {
+            "type": "string",
+            "example": "Planner book"
+          },
+          "price": {
+            "type": "number",
+            "example": 200
+          },
+          "type": {
+            "$ref": "#/components/schemas/productsTypes"
+          }
+        }
+      },
+      "productNameAlreadyExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Продукт с таким именем уже существует"
+          },
+          "error": {
+            "$ref": "#/components/schemas/productCreate"
+          }
+        }
+      },
+      "productDelete": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Book"
+          }
+        }
+      },
+      "productNameIsNotExist": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Продукта с названием {body.title} не существует."
+          }
+        }
+      },
+      "productUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Book"
+          },
+          "description": {
+            "type": "string",
+            "example": "Planner book"
+          },
+          "price": {
+            "type": "number",
+            "example": 200
+          },
+          "type": {
+            "$ref": "#/components/schemas/productsTypes"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "price",
+          "type"
+        ]
+      },
+      "expectedProperty": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Не передан ни один параметр который нужно обновить у продукта"
+          },
+          "error": {
+            "$ref": "#/components/schemas/productUpdate"
+          }
+        }
+      },
+      "productIdIsNotExist_update": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Продукта с id {body.id} не существует."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
