@@ -28,11 +28,11 @@ import { ProductsService } from './products/products.service';
 import { IProductsRepository } from './products/interfaces/products.repository.interface';
 import { ProductsRepository } from './products/products.repository';
 import { ProductsController } from './products/products.controller';
-import { Bot } from './bot/bot';
-import { MainScene } from './bot/scene/main-scene';
-import { ProductsScene } from './bot/scene/products-scene';
-import { CartScene } from './bot/scene/cart-scene';
-import { WelcomeScene } from './bot/scene/welcome-scene';
+import { Bot } from './telegram-bot/bot';
+import { CartScene } from './telegram-bot/scene/cart-scene';
+import { MainScene } from './telegram-bot/scene/main-scene';
+import { ProductsScene } from './telegram-bot/scene/products-scene';
+import { WelcomeScene } from './telegram-bot/scene/welcome-scene';
 
 type MainReturnType = { app: App; container: Container };
 
