@@ -63,6 +63,8 @@
         "jsonwebtoken": "^9.0.2",
         "reflect-metadata": "^0.2.2",
         "signale": "^1.4.0",
-        "swagger-ui-express": "^5.0.1"
+        "swagger-ui-express": "^5.0.1",
+        "telegraf": "^4.16.3",
+        "telegraf-session-local": "^2.1.1"
     }
 }

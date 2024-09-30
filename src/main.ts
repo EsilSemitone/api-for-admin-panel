@@ -27,56 +27,75 @@ import { IProductsService } from './products/interfaces/products.service.interfa
 import { ProductsService } from './products/products.service';
 import { IProductsRepository } from './products/interfaces/products.repository.interface';
 import { ProductsRepository } from './products/products.repository';
-import { ProductsController } from './products/products.controller';;
-import {main as mainBot} from '../../bot/src/main'
+import { ProductsController } from './products/products.controller';
+import { Bot } from './telegram-bot/bot';
+import { CartScene } from './telegram-bot/scene/cart-scene';
+import { MainScene } from './telegram-bot/scene/main-scene';
+import { ProductsScene } from './telegram-bot/scene/products-scene';
+import { WelcomeScene } from './telegram-bot/scene/welcome-scene';
 
 type MainReturnType = { app: App; container: Container };
 
 const container = new Container();
-const mainModule = new ContainerModule(bind => {
+
+const commonModule = new ContainerModule(bind => {
     bind<App>(TYPES.app).to(App).inSingletonScope();
-    bind<IController>(TYPES.usersController).to(UsersController);
     bind<IExceptionsFilters>(TYPES.exceptionsFilters).to(ExceptionsFilters);
-    bind<IAuthGuardFactory>(TYPES.authGuardFactory).to(AuthGuardFactory);
-    bind<IController>(TYPES.adminController).to(AdminController);
-    bind<IController>(TYPES.productsController).to(ProductsController);
-});
-const servicesModule = new ContainerModule(bind => {
     bind<IConfigService>(TYPES.configService).to(ConfigService).inSingletonScope();
-    bind<IUsersService>(TYPES.usersService).to(UsersService).inSingletonScope();
     bind<IJwtService>(TYPES.jwtService).to(JWTService).inSingletonScope();
-    bind<IRolesService>(TYPES.rolesService).to(RolesService).inSingletonScope();
 });
 
-const repositoryModule = new ContainerModule(bind => {
+const userModule = new ContainerModule(bind => {
+    bind<IController>(TYPES.usersController).to(UsersController);
+    bind<IUsersService>(TYPES.usersService).to(UsersService).inSingletonScope();
     bind<IUsersRepository>(TYPES.userRepository).to(UserRepository).inSingletonScope();
-    bind<IRolesOnUsersRepository>(TYPES.rolesRepository).to(RolesOnUsersRepository).inSingletonScope();
-});
-
-export const prismaModule = new ContainerModule(bind => {
     bind<ILogger>(TYPES.logger).to(LoggerService).inSingletonScope();
     bind<PrismaService>(TYPES.prismaService).to(PrismaService).inSingletonScope();
-}) 
+    bind<IAuthGuardFactory>(TYPES.authGuardFactory).to(AuthGuardFactory);
+});
 
-export const productsModule = new ContainerModule(bind => {
+const adminModule = new ContainerModule(bind => {
+    bind<IController>(TYPES.adminController).to(AdminController);
+});
+
+const rolesModule = new ContainerModule(bind => {
+    bind<IRolesService>(TYPES.rolesService).to(RolesService).inSingletonScope();
+    bind<IRolesOnUsersRepository>(TYPES.rolesRepository)
+        .to(RolesOnUsersRepository)
+        .inSingletonScope();
+});
+
+const productsModule = new ContainerModule(bind => {
+    bind<IController>(TYPES.productsController).to(ProductsController);
     bind<IProductsService>(TYPES.productsService).to(ProductsService).inSingletonScope();
     bind<IProductsRepository>(TYPES.productsRepository).to(ProductsRepository).inSingletonScope();
-})
+});
+
+const botModule = new ContainerModule(bind => {
+    bind<Bot>(TYPES.bot).to(Bot);
+    bind<MainScene>(TYPES.main_Scene).to(MainScene).inSingletonScope();
+    bind<ProductsScene>(TYPES.product_Scene).to(ProductsScene).inSingletonScope();
+    bind<WelcomeScene>(TYPES.welcome_Scene).to(WelcomeScene).inSingletonScope();
+    bind<CartScene>(TYPES.cart_Scene).to(CartScene).inSingletonScope();
+});
 
 function buildContainer(): Container {
-    container.load(mainModule);
-    container.load(servicesModule);
-    container.load(repositoryModule);
-    container.load(prismaModule);
+    commonModule;
+    container.load(commonModule);
+    container.load(userModule);
+    container.load(adminModule);
+    container.load(rolesModule);
     container.load(productsModule);
+    container.load(botModule);
     return container;
 }
 
 async function main(): Promise<MainReturnType> {
     const container = buildContainer();
     const app = container.get<App>(TYPES.app);
+    const bot = container.get<Bot>(TYPES.bot);
     await app.init();
-    mainBot()
+    bot.init();
 
     return { app, container };
 }

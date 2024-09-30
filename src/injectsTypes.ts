@@ -15,4 +15,9 @@ export const TYPES = {
     productsService: Symbol('ProductsService'),
     productsRepository: Symbol('ProductsRepository'),
     productsController: Symbol('ProductsController'),
+    bot: Symbol('bot'),
+    welcome_Scene: Symbol('welcome_Scene'),
+    main_Scene: Symbol('main_Scene'),
+    product_Scene: Symbol('product_Scene'),
+    cart_Scene: Symbol('cart_Scene'),
 };
